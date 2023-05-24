@@ -6,9 +6,14 @@ import "../../styles/home.css";
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 
+	const handleClick = () => {
+		actions.getRandomCards();
+	}
+
 	return (
 		<div className="text-center mt-5">
 			<h1>Hello Rigo!!</h1>
+			<button onClick={() => handleClick()}>Click for fun times</button>
 			<p>
 				<img src={rigoImageUrl} />
 			</p>

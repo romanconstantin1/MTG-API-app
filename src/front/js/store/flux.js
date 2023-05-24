@@ -21,6 +21,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				getActions().changeColor(0, "green");
 			},
 
+			getRandomCards: async () => {
+				const resp = await fetch("https://api.magicthegathering.io/v1/cards", {
+					method: "GET"
+				})
+				const data = await resp.json()
+				console.log(data)
+				return data
+			},
+
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
