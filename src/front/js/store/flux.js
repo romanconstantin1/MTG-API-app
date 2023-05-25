@@ -13,7 +13,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			randomCard: "",
+			searchedCard: {},
+			searchedCardImg: ""
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -22,12 +25,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getRandomCards: async () => {
-				const resp = await fetch("https://api.magicthegathering.io/v1/cards", {
-					method: "GET"
-				})
-				const data = await resp.json()
-				console.log(data)
-				return data
+				try {
+					const resp = await fetch("https://api.scryfall.com/cards/random?q=is%3Acommander", {
+						method: "GET"
+					})
+					const data = await resp.json()
+					setStore({randomCard: data.name})
+					return data.name
+				} catch(error) {
+					alert(`Something went wrong while fetching a random card`, error)
+				}
+			},
+
+			searchForCard: async (cardname) => {
+				try {
+					const resp = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${cardname}`, {
+						method: "GET"
+					})
+					const data = await resp.json()
+					console.log(data)
+					setStore({searchedCard: data, searchedCardImg: data.image_uris.normal})
+					return data
+				} catch(error) {
+					alert(`Something went wrong while searching for ${cardname}`, error)
+				}
 			},
 
 			getMessage: async () => {
