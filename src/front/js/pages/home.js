@@ -12,6 +12,10 @@ export const Home = () => {
 		actions.getRandomCards()
 	}
 
+	const handleSaveClick = () => {
+		actions.saveToDB(store.searchedCard)
+	}
+
 	return (
 		<div className="text-center mt-5">
 			{/* <h1>Hello Rigo!!</h1> */}
@@ -19,8 +23,9 @@ export const Home = () => {
 			<h3>Your random commander is</h3>
 			<h1>{store.randomCard}</h1>
 			<h3>The card you searched for is</h3>
-			<img src={store.searchedCardImg} />
+			<img src={store.searchedCard.image_uris.normal} />
 			<h1>{store.searchedCard.name}</h1>
+			<button onClick={() => handleSaveClick()}>Save this card</button>
 			{/* <p>
 				<img src={rigoImageUrl} />
 			</p>

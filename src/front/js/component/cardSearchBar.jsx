@@ -30,18 +30,20 @@ export const CardSearchBar = () => {
             <div className="search">
                 <h5>Card search</h5>
                 <input  type="text"
-                        placeholder={"Search for a card"}
-                        className={"input"}
+                        placeholder="Search for a card"
+                        className="search_input"
                         onChange={event => setQuery(event.target.value)}
                         value={query}
                 />
             </div>
+            <div className="search_dropdown">
             {cards?.map((cardname, index) => 
                 <div key={index} onClick={() => handleClick(cardname)}>
                     <h6>{cardname}</h6>
                 </div>
             )}
-            <h5>Try "Sigarda," "Avacyn," "Lightning Bolt," etc.</h5>
+            </div>
+            <h5>Try "Mishra," "Urza," "Swords To Plowshares," etc.</h5>
         </div>
     )
 }

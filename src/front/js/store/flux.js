@@ -15,8 +15,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			randomCard: "",
-			searchedCard: {},
-			searchedCardImg: ""
+			searchedCard: {name: null, image_uris: {normal: null}},
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -48,6 +47,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return data
 				} catch(error) {
 					alert(`Something went wrong while searching for ${cardname}`, error)
+				}
+			},
+
+			saveToDB: async (cardData) => {
+				const store = getStore()
+				const cardstringify = JSON.stringify(cardData)
+				console.log(cardstringify)
+				console.log(`attempting to add ${cardData.name} to db`)
+				try{
+					// fetching data from the backend
+					const resp = await fetch(process.env.BACKEND_URL + "/api/addcard/", {
+						method: "POST",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: cardstringify
+					})
+					const data = await resp.json()
+					console.log(data)
+					// don't forget to return something, that is how the async resolves
+					return data;
+				}catch(error){
+					console.log("Error loading message from backend", error)
 				}
 			},
 

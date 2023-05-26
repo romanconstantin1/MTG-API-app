@@ -39,15 +39,13 @@ class Decks(db.Model):
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
-    maintype = db.Column(db.String(120), unique=False, nullable=False)
-    subtype = db.Column(db.String(120), unique=False, nullable=False)
+    card_type = db.Column(db.String(120), unique=False, nullable=False)
     mana_cost = db.Column(db.String(120), unique=False)
     cmc = db.Column(db.Integer, unique=False)
-    image = db.Column(db.String(120), unique=False, nullable=False)
-    rules_text = db.Column(db.String(120), unique=False, nullable=False)
-    flavor_text = db.Column(db.String(120), unique=False, nullable=False)
-    sets = db.Column(db.String(120), unique=False, nullable=False)
-    legality = db.Column(db.String(120), unique=False, nullable=False)
+    image_uri = db.Column(db.String(250), unique=False, nullable=False)
+    rules_text = db.Column(db.String(250), unique=False, nullable=False)
+    flavor_text = db.Column(db.String(250), unique=False, nullable=False)
+    legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
 
     def __repr__(self):
@@ -57,17 +55,34 @@ class Cards(db.Model):
         return {
             "id": self.id,
             "cardname": self.name,
-            "type": self.maintype,
-            "subtype": self.subtype,
-            "mana cost": self.mana_cost,
-            "rules text": self.rules_text,
-            "sets": self.sets,
-            "legal in": self.legality,
-            "flavor text": self.flavor_text,
+            "card_type": self.card_type,
+            "mana_cost": self.mana_cost,
+            "rules_text": self.rules_text,
+            "legalities": self.legalities,
+            "flavor_text": self.flavor_text,
             "artist": self.artist,
-            "image": self.image
-        }
+            "image": self.image_uri
+        } 
     
+    @classmethod
+    def create(cls, name, card_type, mana_cost, cmc, rules_text, legalities, flavor_text, artist, image_uri):
+        new_card = cls()
+        new_card.name = name
+        new_card.card_type = card_type
+        new_card.mana_cost = mana_cost
+        new_card.cmc = cmc
+        new_card.rules_text = rules_text
+        new_card.legalities = legalities
+        new_card.flavor_text = flavor_text
+        new_card.artist = artist
+        new_card.image_uri = image_uri
+
+        db.session.add(new_card)
+        db.session.commit()
+
+        return new_card
+
+
 cards_in_decks = db.Table('cards_in_decks',
     db.Column("id", db.Integer, primary_key=True),    
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
