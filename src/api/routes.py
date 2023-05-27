@@ -46,3 +46,15 @@ def handle_add():
     }
 
     return jsonify(response), 200
+
+@api.route('/cards', methods=['GET'])
+@cross_origin()
+def handle_cards():
+    cards = Cards.read_all()
+    cards_list = list(map(lambda card: card.serialize(), cards))
+
+    response = {
+        "saved_cards": cards_list
+    }
+
+    return jsonify(response), 200

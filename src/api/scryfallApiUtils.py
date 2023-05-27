@@ -4,7 +4,7 @@ class ScryfallAPIUtils(object):
         for entry in cardData["legalities"]:
             if cardData["legalities"][entry] == "legal":
                 legalities.append(entry)
-
+        # add some stuff here to allow flavor text & rules text to be null
         print(legalities)
         return {
             "name": cardData["name"],

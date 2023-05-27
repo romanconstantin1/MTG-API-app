@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 
+import { htmlNameEncode } from "./htmlNameEncode";
+
 export const CardSearchBar = () => {
     const { store, actions } = useContext(Context)
     const [query, setQuery] = useState('')
@@ -23,6 +25,7 @@ export const CardSearchBar = () => {
 
     const handleClick = (cardname) => {
         actions.searchForCard(cardname)
+        actions.getAllPrintings(htmlNameEncode(cardname))
     }
 
     return (
