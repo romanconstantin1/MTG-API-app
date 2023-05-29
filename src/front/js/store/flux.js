@@ -32,7 +32,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getSavedCards: async () => {
 				try{
 					const resp = await fetch(process.env.BACKEND_URL + "/cards", {
-					// const resp = await fetch("http://192.168.1.170:3001/cards", {
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json"
@@ -93,8 +92,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore()
 				const actions = getActions()
 				const cardstringify = JSON.stringify(cardData)
-				console.log(cardstringify)
-				console.log(`attempting to add ${cardData.name} to db`)
 				try{
 					const resp = await fetch(process.env.BACKEND_URL + "/addcard", {
 						method: "POST",
@@ -105,11 +102,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: cardstringify
 					})
 					const data = await resp.json()
-					console.log(data)
 					actions.getSavedCards()
 					return data;
 				}catch(error){
-					console.log("Error loading message from backend", error)
+					console.log(`Error saving ${cardData.name} to the db`, error)
+				}
+			},
+
+			deleteCard: async (cardData) => {
+				const store = getStore()
+				const actions = getActions()
+				const newSavedList = store.savedCards.filter(cardToFind => {
+					return cardToFind.id !== cardData.id;
+				  });
+				  setStore({savedCards: newSavedList})
+				try{
+					const resp = await fetch(process.env.BACKEND_URL + `/deletecard/${cardData.id}`, {
+						method: "DELETE",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						}
+					})
+					const data = await resp.json()
+					actions.getSavedCards()
+					console.log(`deleted ${cardData.cardname}`)
+					return data;
+				}catch(error){
+					console.log(`Error deleting ${cardData.cardname} from the db`, error)
 				}
 			},
 

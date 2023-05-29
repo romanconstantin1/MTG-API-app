@@ -34,6 +34,16 @@ def handle_add():
 
     return jsonify(response), 200
 
+@cards_api.route("/deletecard/<int:id>", methods=["DELETE"])
+def remove_card(id):
+    card = Cards.query.get(id)
+    if card == None:
+        return jsonify({"msg": 'Card not found'}), 404
+
+    card.remove()
+    response = {"msg": 'Card deleted'}
+    return jsonify(response), 200
+
 @cards_api.route('/cards', methods=['GET'])
 @cross_origin()
 def handle_cards():

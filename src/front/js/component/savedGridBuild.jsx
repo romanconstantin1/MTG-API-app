@@ -5,17 +5,24 @@ import { Context } from "../store/appContext";
 
 export const SavedGridBuild = () => {
     const { store, actions } = useContext(Context);
+    const handleClick = (cardData) => {
+        actions.deleteCard(cardData)
+    }
     
     const gridBuilder = () => {
         if (store?.savedCards) {
             return (
                 <div className="d-flex flex-wrap">
                     {store.savedCards.map(entry => (
-                        console.log(entry),
-                        <img src={entry.image} style={{width:"200px", height:"300px"}}/>
+                        <div>
+                            <img 
+                                src={entry.image} 
+                                style={{width:"200px", height:"300px"}}
+                                onClick={() => console.log(entry)}/>
+                            <button onClick={() => handleClick(entry)}>Delete this card</button>
+                        </div>
                     )
                 )}
-                {console.log(store.savedCards)}
                 </div>
             )
         } else {

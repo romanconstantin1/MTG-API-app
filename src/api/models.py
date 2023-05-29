@@ -84,9 +84,10 @@ class Cards(db.Model):
 
         return new_card
     
-    @classmethod
-    def remove(cls):
-        #do stuff here
+    def remove(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
         return None
     
