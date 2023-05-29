@@ -30,9 +30,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getSavedCards: async () => {
-				const store = getStore()
 				try{
-					const resp = await fetch(process.env.BACKEND_URL + "/api/cards/", {
+					const resp = await fetch(process.env.BACKEND_URL + "/cards", {
+					// const resp = await fetch("http://192.168.1.170:3001/cards", {
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json"
@@ -96,7 +96,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log(cardstringify)
 				console.log(`attempting to add ${cardData.name} to db`)
 				try{
-					const resp = await fetch(process.env.BACKEND_URL + "/api/addcard/", {
+					const resp = await fetch(process.env.BACKEND_URL + "/addcard", {
 						method: "POST",
 						headers: {
 							"Access-Control-Allow-Origin": "*",

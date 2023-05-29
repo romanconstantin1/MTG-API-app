@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 from api.models import db, Users, Cards, Decks
 from api.utils import generate_sitemap, APIException
 from api.scryfallApiUtils import ScryfallAPIUtils
+from api.card_routes import cards_api
 
 api = Blueprint('api', __name__)
 
@@ -19,42 +20,42 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route('/addcard', methods=['POST'])
-@cross_origin()
-def handle_add():
-    data = request.json
-    card_entry = ScryfallAPIUtils.create_db_card(data)
+# @api.route('/addcard', methods=['POST'])
+# @cross_origin()
+# def handle_add():
+#     data = request.json
+#     card_entry = ScryfallAPIUtils.create_db_card(data)
     
-    Cards.create(
-        card_entry["name"],
-        card_entry["card_type"], 
-        card_entry["mana_cost"],
-        card_entry["cmc"],
-        card_entry["rules_text"],
-        card_entry["legalities"],
-        card_entry["flavor_text"],
-        card_entry["artist"],
-        card_entry["image_uri"]
-    )
+#     Cards.create(
+#         card_entry["name"],
+#         card_entry["card_type"], 
+#         card_entry["mana_cost"],
+#         card_entry["cmc"],
+#         card_entry["rules_text"],
+#         card_entry["legalities"],
+#         card_entry["flavor_text"],
+#         card_entry["artist"],
+#         card_entry["image_uri"]
+#     )
 
-    response = {
-        "message": f'{card_entry["name"]} added to db',
-        "type": card_entry["card_type"],
-        "mana cost": card_entry["mana_cost"],
-        "rules text": card_entry["rules_text"],
-        "flavor text": card_entry["flavor_text"]
-    }
+#     response = {
+#         "message": f'{card_entry["name"]} added to db',
+#         "type": card_entry["card_type"],
+#         "mana cost": card_entry["mana_cost"],
+#         "rules text": card_entry["rules_text"],
+#         "flavor text": card_entry["flavor_text"]
+#     }
 
-    return jsonify(response), 200
+#     return jsonify(response), 200
 
-@api.route('/cards', methods=['GET'])
-@cross_origin()
-def handle_cards():
-    cards = Cards.read_all()
-    cards_list = list(map(lambda card: card.serialize(), cards))
+# @api.route('/cards', methods=['GET'])
+# @cross_origin()
+# def handle_cards():
+#     cards = Cards.read_all()
+#     cards_list = list(map(lambda card: card.serialize(), cards))
 
-    response = {
-        "saved_cards": cards_list
-    }
+#     response = {
+#         "saved_cards": cards_list
+#     }
 
-    return jsonify(response), 200
+#     return jsonify(response), 200

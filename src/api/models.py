@@ -85,6 +85,12 @@ class Cards(db.Model):
         return new_card
     
     @classmethod
+    def remove(cls):
+        #do stuff here
+
+        return None
+    
+    @classmethod
     def read_all(cls):
         return cls.query.all()
 
