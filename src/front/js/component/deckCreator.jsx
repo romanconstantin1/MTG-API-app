@@ -29,19 +29,19 @@ export const DeckCreator = () => {
         if (deckName=="" || formatName=='Select a format') {
             alert("One or more required parameters is missing");
         } else {
-            actions.saveDeck(deckName, formatName);
+            actions.saveDeckToDB(deckName, formatName);
         }	
 	}
 
 	return (
-        <div className="deckname_input_div">
+        <div className="deckname_input_div d-flex flex-wrap">
 			<input  type="text"
                         placeholder="Create a new deck"
                         className="deckname_input"
                         onChange={event => setDeckName(event.target.value)}
                         value={deckName}
                 />
-            <div className="dropdown">
+            <div className="dropdown mx-2">
                 <button onClick={handleOpen}>{formatName}</button>
                     {open ? (
                         <ul className="menu">

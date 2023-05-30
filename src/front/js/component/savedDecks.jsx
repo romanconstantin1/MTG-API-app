@@ -16,7 +16,7 @@ export const SavedDecksDisplay = () => {
                 <div>
                     {store.savedDecks.map((entry, index) => (
                         <div key={index}>
-                            <h1>Deck: {entry.name}</h1>
+                            <h1>Deck: {entry.deckname}</h1>
                             <h1>Format: {entry.format}</h1>
                             <button onClick={() => handleClick(entry)}>Delete this deck</button>
                         </div>

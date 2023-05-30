@@ -9,7 +9,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    decks = db.relationship("Decks", backref="user", lazy=True)
+    #decks = db.relationship("Decks", backref="user", lazy=True)
 
     def __repr__(self):
         return f'<User: {self.username}>'
@@ -23,7 +23,7 @@ class Users(db.Model):
     
 class Decks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    #user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(120), unique=False, nullable=False)
     format = db.Column(db.String(120), unique=False, nullable=False)
 
@@ -33,7 +33,8 @@ class Decks(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "deckname": self.name
+            "deckname": self.name,
+            "format": self.format
         }
 
     @classmethod

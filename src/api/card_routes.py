@@ -6,12 +6,13 @@ from api.scryfallApiUtils import ScryfallAPIUtils
 
 cards_api = Blueprint('cards_api', __name__)
 
-@cards_api.route('/addcard', methods=['POST'])
+@cards_api.route('/add_card', methods=['POST'])
 @cross_origin()
 def handle_add():
     data = request.json
-    card_entry = ScryfallAPIUtils.create_db_card(data)
     
+    card_entry = ScryfallAPIUtils.create_db_card(data)
+    print(card_entry)
     Cards.create(
         card_entry["name"],
         card_entry["card_type"], 
@@ -34,7 +35,7 @@ def handle_add():
 
     return jsonify(response), 200
 
-@cards_api.route("/deletecard/<int:id>", methods=["DELETE"])
+@cards_api.route("/delete_card/<int:id>", methods=["DELETE"])
 def remove_card(id):
     card = Cards.query.get(id)
     if card == None:
