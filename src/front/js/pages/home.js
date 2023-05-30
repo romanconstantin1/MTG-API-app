@@ -2,23 +2,25 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
-import { CardSearchBar } from "../component/cardSearchBar.jsx";
+import { DeckCreator } from "../component/deckCreator.jsx";
 import "../../styles/home.css";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
-	
+	const [query, setQuery] = useState('')
+
 	const handleClick = () => {
 		actions.getRandomCards()
 	}
 
 	const handleSaveClick = () => {
-		actions.saveToDB(store.searchedCard)
+		actions.saveCardToDB(store.searchedCard)
 	}
 
 	return (
 		<div className="text-center mt-5">
 			{/* <h1>Hello Rigo!!</h1> */}
+			<DeckCreator />
 			<button onClick={() => handleClick()}>Find a random commander</button>
 			<h3>Your random commander is</h3>
 			<h1>{store.randomCard}</h1>

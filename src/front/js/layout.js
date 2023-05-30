@@ -6,7 +6,8 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
-import { SavedCards } from "./pages/savedcards";
+import { SavedCards } from "./pages/cards";
+import { SavedDecks } from "./pages/decks";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -27,7 +28,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<SavedCards />} path="/saved" />
+                        <Route element={<SavedCards />} path="/cards" />
+                        <Route element={<SavedDecks />} path="/decks" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

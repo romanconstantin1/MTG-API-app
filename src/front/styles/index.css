@@ -7,3 +7,11 @@
     background-color: white;
     width: 300px;
 } 
+
+.deckname_input {
+    margin-right: 10px;
+}
+
+.deckname_input_div {
+    padding: 10px
+}

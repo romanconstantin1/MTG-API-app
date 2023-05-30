@@ -36,6 +36,27 @@ class Decks(db.Model):
             "deckname": self.name
         }
 
+    @classmethod
+    def create(cls, name, format):
+        new_deck = cls()
+        new_deck.name = name
+        new_deck.format = format
+
+        db.session.add(new_deck)
+        db.session.commit()
+
+        return new_deck
+    
+    def remove(self):
+        db.session.delete(self)
+        db.session.commit()
+
+        return None
+    
+    @classmethod
+    def read_all(cls):
+        return cls.query.all()
+    
 # check to see if rules text, flavor text, etc., can be made nullable for cards missing one/both
 # also consider p/t, planeswalker loyaly?
 class Cards(db.Model):

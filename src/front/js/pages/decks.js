@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-import { SavedGridBuild } from "../component/savedGridBuild.jsx";
+import { SavedDecksDisplay } from "../component/savedDecks.jsx";
+import { DeckCreator } from "../component/deckCreator.jsx";
 
-export const SavedCards = () => {
+export const SavedDecks = () => {
     const { store, actions } = useContext(Context);
-    //do other stuff here eventually
-    //for now, just call component & return the grid of cards
 
     return (
         <div>
-            <SavedGridBuild />
+            <DeckCreator />
+            <SavedDecksDisplay />
             {/* {console.log("return")}
             {console.log(store.savedCards)} */}
             {/* {savedCards.map(entry => <img src={entry.image} />)} */}

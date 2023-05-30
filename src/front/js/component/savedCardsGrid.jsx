@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const SavedGridBuild = () => {
+export const SavedCardsGrid = () => {
     const { store, actions } = useContext(Context);
     const handleClick = (cardData) => {
         actions.deleteCard(cardData)
     }
     
     const gridBuilder = () => {
-        if (store?.savedCards) {
+        if (store.savedCards.length > 0) {
             return (
                 <div className="d-flex flex-wrap">
                     {store.savedCards.map(entry => (
@@ -25,8 +25,10 @@ export const SavedGridBuild = () => {
                 )}
                 </div>
             )
+        } else if (store.savedCards.length <= 0){
+            return <h1>No saved cards</h1>
         } else {
-            return <h1>Loading...</h1>
+        return <h1>Loading...</h1>
         }
     }
     

@@ -17,7 +17,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			randomCard: "",
 			searchedCard: {name: null, image_uris: {normal: null}},
 			allCardPrintings: null,
-			savedCards: null
+			savedCards: [],
+			savedDecks: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -31,7 +32,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			getSavedCards: async () => {
 				try{
-					const resp = await fetch(process.env.BACKEND_URL + "/cards", {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/cards", {
 						method: "GET",
 						headers: {
 							"Content-Type": "application/json"
@@ -88,12 +89,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			saveToDB: async (cardData) => {
+			saveCardToDB: async (cardData) => {
 				const store = getStore()
 				const actions = getActions()
 				const cardstringify = JSON.stringify(cardData)
 				try{
-					const resp = await fetch(process.env.BACKEND_URL + "/addcard", {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/addcard", {
 						method: "POST",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
@@ -114,25 +115,43 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const actions = getActions()
 				const newSavedList = store.savedCards.filter(cardToFind => {
 					return cardToFind.id !== cardData.id;
-				  });
-				  setStore({savedCards: newSavedList})
-				try{
-					const resp = await fetch(process.env.BACKEND_URL + `/deletecard/${cardData.id}`, {
+				  	});
+				setStore({savedCards: newSavedList});
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/deletecard/${cardData.id}`, {
 						method: "DELETE",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
 						}
 					})
-					const data = await resp.json()
+					const data = await resp.json();
 					actions.getSavedCards()
 					console.log(`deleted ${cardData.cardname}`)
 					return data;
-				}catch(error){
+				} catch (error) {
 					console.log(`Error deleting ${cardData.cardname} from the db`, error)
 				}
 			},
 
+			saveDeck: (deckName, formatName) => {
+				const store = getStore()
+				const newDeck = {name: deckName, format: formatName}
+				console.log(newDeck)
+				const newDeckList = [...store.savedDecks]
+				newDeckList.push(newDeck)
+				setStore({savedDecks: newDeckList})
+			},
+
+			deleteDeck: (deckData) => {
+				const store = getStore()
+				const newSavedList = store.savedDecks.filter(deckToFind => {
+					return deckToFind.name !== deckData.name;
+				  	});
+				setStore({savedDecks: newSavedList});
+			}
+			,
 			getMessage: async () => {
 				try{
 					// fetching data from the backend

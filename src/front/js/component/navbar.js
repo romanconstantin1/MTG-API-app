@@ -20,8 +20,11 @@ export const Navbar = () => {
 				<Link to="/" onClick={() => handleClick()}>
 					<span className="navbar-brand mb-0 h1">search</span>
 				</Link>
-				<Link to="/saved">
-					<span className="navbar-brand mb-0 h1">saved</span>
+				<Link to="/cards">
+					<span className="navbar-brand mb-0 h1">saved cards</span>
+				</Link>
+				<Link to="/decks">
+					<span className="navbar-brand mb-0 h1">saved decks</span>
 				</Link>
 				{/* <div className="ml-auto">
 					<Link to="/demo">
