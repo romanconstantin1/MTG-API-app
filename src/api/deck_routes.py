@@ -42,3 +42,15 @@ def handle_cards():
     }
 
     return jsonify(response), 200
+
+@decks_api.route('/decks/<int:deck_id>/add_card/<int:card_id>', methods=['PUT'])
+@cross_origin()
+def handle_add_to_deck(deck_id, card_id):
+    deck = Decks.query.get(deck_id)
+    card = Cards.query.get(card_id)
+
+    if deck is not None and card is not None:
+        deck.add_card(card_id, deck_id)
+        return jsonify("Card added to the deck successfully."), 200
+    else:
+        return jsonify("Card or deck not found."), 400

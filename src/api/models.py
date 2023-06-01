@@ -20,12 +20,20 @@ class Users(db.Model):
             "email": self.email,
             "username": self.username
         }
-    
+
+cards_in_decks = db.Table('cards_in_decks',
+    db.Column("id", db.Integer, primary_key=True),    
+    db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
+    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
+    db.Column("quantity", db.Integer)
+)
+
 class Decks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     #user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(120), unique=False, nullable=False)
     format = db.Column(db.String(120), unique=False, nullable=False)
+    cards = db.relationship('Cards', secondary=cards_in_decks, backref=db.backref('decks', lazy='dynamic'))
 
     def __repr__(self):
         return f'<Deck: {self.name}>'
@@ -34,7 +42,8 @@ class Decks(db.Model):
         return {
             "id": self.id,
             "deckname": self.name,
-            "format": self.format
+            "format": self.format,
+            "cards": [card.serialize() for card in self.cards]
         }
 
     @classmethod
@@ -58,6 +67,19 @@ class Decks(db.Model):
     def read_all(cls):
         return cls.query.all()
     
+    @classmethod
+    def add_card(cls, card_id, deck_id):
+        card = Cards.query.get(card_id)
+        deck = cls.query.get(deck_id)
+
+        if card is not None and deck is not None:
+            deck.cards.append(card)
+            db.session.add(deck)
+            db.session.commit()
+            return "Card added to the deck successfully."
+        else:
+            return "Card or deck not found."
+    
 # check to see if rules text, flavor text, etc., can be made nullable for cards missing one/both
 # also consider p/t, planeswalker loyaly?
 class Cards(db.Model):
@@ -67,8 +89,8 @@ class Cards(db.Model):
     mana_cost = db.Column(db.String(120), unique=False)
     cmc = db.Column(db.Integer, unique=False)
     image_uri = db.Column(db.String(250), unique=False, nullable=False)
-    rules_text = db.Column(db.String(250), unique=False, nullable=False)
-    flavor_text = db.Column(db.String(250), unique=False, nullable=False)
+    oracle_text = db.Column(db.String(250), unique=False, nullable=True)
+    flavor_text = db.Column(db.String(250), unique=False, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
 
@@ -81,7 +103,7 @@ class Cards(db.Model):
             "cardname": self.name,
             "card_type": self.card_type,
             "mana_cost": self.mana_cost,
-            "rules_text": self.rules_text,
+            "oracle_text": self.oracle_text,
             "legalities": self.legalities,
             "flavor_text": self.flavor_text,
             "artist": self.artist,
@@ -89,13 +111,13 @@ class Cards(db.Model):
         } 
     
     @classmethod
-    def create(cls, name, card_type, mana_cost, cmc, rules_text, legalities, flavor_text, artist, image_uri):
+    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, flavor_text, artist, image_uri):
         new_card = cls()
         new_card.name = name
         new_card.card_type = card_type
         new_card.mana_cost = mana_cost
         new_card.cmc = cmc
-        new_card.rules_text = rules_text
+        new_card.oracle_text = oracle_text
         new_card.legalities = legalities
         new_card.flavor_text = flavor_text
         new_card.artist = artist
@@ -116,11 +138,3 @@ class Cards(db.Model):
     @classmethod
     def read_all(cls):
         return cls.query.all()
-
-
-cards_in_decks = db.Table('cards_in_decks',
-    db.Column("id", db.Integer, primary_key=True),    
-    db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
-    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
-    db.Column("quantity", db.Integer)
-)

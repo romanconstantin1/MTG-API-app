@@ -14,11 +14,12 @@ export const SavedCardsGrid = () => {
             return (
                 <div className="d-flex flex-wrap">
                     {store.savedCards.map(entry => (
-                        <div>
+                        <div className="d-flex align-items-center">
                             <img 
                                 src={entry.image} 
-                                style={{width:"200px", height:"300px"}}
+                                style={{width:"200px", height:"300px", borderRadius: "9px"}}
                                 onClick={() => console.log(entry)}/>
+                            
                             <button onClick={() => handleClick(entry)}>Delete this card</button>
                         </div>
                     )

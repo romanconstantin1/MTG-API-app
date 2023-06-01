@@ -18,7 +18,7 @@ def handle_add():
         card_entry["card_type"], 
         card_entry["mana_cost"],
         card_entry["cmc"],
-        card_entry["rules_text"],
+        card_entry["oracle_text"],
         card_entry["legalities"],
         card_entry["flavor_text"],
         card_entry["artist"],
@@ -28,9 +28,9 @@ def handle_add():
     response = {
         "message": f'{card_entry["name"]} added to db',
         "type": card_entry["card_type"],
-        "mana cost": card_entry["mana_cost"],
-        "rules text": card_entry["rules_text"],
-        "flavor text": card_entry["flavor_text"]
+        "mana_cost": card_entry["mana_cost"],
+        "oracle_text": card_entry["oracle_text"],
+        "flavor_text": card_entry["flavor_text"]
     }
 
     return jsonify(response), 200

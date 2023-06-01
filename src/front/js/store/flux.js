@@ -80,6 +80,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "GET"
 					})
 					const data = await resp.json()
+					console.log(data)
 					setStore({searchedCard: data})
 					return data
 				} catch(error) {
@@ -152,7 +153,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			saveDeckToDB: async (deckName, formatName) => {
 				const store = getStore()
 				const actions = getActions()
-				const newDeck = {"deckname": deckName, "format": formatName}
+				const newDeck = {"deckname": deckName, "format": formatName, "cards": []}
 				const deckStringify = JSON.stringify(newDeck)
 				
 				const newDeckList = [...store.savedDecks]
@@ -199,6 +200,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log(`Error deleting ${deckData.deckname} from the db`, error)
 				}
+			},
+
+			addNewCardToDeck: async (deckId) => {
+				const store = getStore()
+				const actions = getActions()
+				const savedCard = await actions.saveCardToDB(store.searchedCard)
+				console.log(savedCard)
+				console.log(await store.savedCards)
+				// try {
+				// 	const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${id}/add_card/${store.searchedCard.id}`, {
+				// 		method: "DELETE",
+				// 		headers: {
+				// 			"Access-Control-Allow-Origin": "*",
+				// 			"Content-Type": "application/json"
+				// 		}
+				// 	})
+				// 	const data = await resp.json();
+				// 	actions.getSavedDecks()
+				// 	return data;
+				// } catch (error) {
+				// 	console.log(`Error deleting ${deckData.deckname} from the db`, error)
+				// }
 			}
 			,
 			getMessage: async () => {
