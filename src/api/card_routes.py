@@ -13,7 +13,7 @@ def handle_add():
     
     card_entry = ScryfallAPIUtils.create_db_card(data)
     print(card_entry)
-    Cards.create(
+    card_in_db = Cards.create(
         card_entry["name"],
         card_entry["card_type"], 
         card_entry["mana_cost"],
@@ -27,6 +27,8 @@ def handle_add():
 
     response = {
         "message": f'{card_entry["name"]} added to db',
+        "card_name": card_entry["name"],
+        "id": card_in_db.id,
         "type": card_entry["card_type"],
         "mana_cost": card_entry["mana_cost"],
         "oracle_text": card_entry["oracle_text"],

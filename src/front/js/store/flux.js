@@ -102,7 +102,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: cardstringify
 					})
 					const data = await resp.json()
-					actions.getSavedCards()
+					await actions.getSavedCards()
 					return data;
 				}catch(error){
 					console.log(`Error saving ${cardData.name} to the db`, error)
@@ -143,6 +143,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					})
 					const data = await resp.json()
+					console.log(data.saved_decks)
 					setStore({savedDecks: data.saved_decks})
 					return data;
 				}catch(error){
@@ -206,22 +207,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore()
 				const actions = getActions()
 				const savedCard = await actions.saveCardToDB(store.searchedCard)
-				console.log(savedCard)
-				console.log(await store.savedCards)
-				// try {
-				// 	const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${id}/add_card/${store.searchedCard.id}`, {
-				// 		method: "DELETE",
-				// 		headers: {
-				// 			"Access-Control-Allow-Origin": "*",
-				// 			"Content-Type": "application/json"
-				// 		}
-				// 	})
-				// 	const data = await resp.json();
-				// 	actions.getSavedDecks()
-				// 	return data;
-				// } catch (error) {
-				// 	console.log(`Error deleting ${deckData.deckname} from the db`, error)
-				// }
+				console.log(`card id is ${savedCard.id}`)
+				console.log(`deck id is ${deckId}`)
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${deckId}/add_card/${savedCard.id}`, {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						}
+					})
+					const data = await resp.json();
+					actions.getSavedDecks()
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${savedCard.cardname} to a deck`, error)
+				}
 			}
 			,
 			getMessage: async () => {

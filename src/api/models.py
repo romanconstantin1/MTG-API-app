@@ -22,7 +22,7 @@ class Users(db.Model):
         }
 
 cards_in_decks = db.Table('cards_in_decks',
-    db.Column("id", db.Integer, primary_key=True),    
+    # db.Column("id", db.Integer, primary_key=True),    
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
     db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
     db.Column("quantity", db.Integer)
@@ -67,14 +67,12 @@ class Decks(db.Model):
     def read_all(cls):
         return cls.query.all()
     
-    @classmethod
     def add_card(cls, card_id, deck_id):
         card = Cards.query.get(card_id)
         deck = cls.query.get(deck_id)
 
         if card is not None and deck is not None:
             deck.cards.append(card)
-            db.session.add(deck)
             db.session.commit()
             return "Card added to the deck successfully."
         else:
