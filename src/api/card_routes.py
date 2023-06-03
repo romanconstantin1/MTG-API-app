@@ -22,7 +22,8 @@ def handle_add():
         card_entry["legalities"],
         card_entry["flavor_text"],
         card_entry["artist"],
-        card_entry["image_uri"]
+        card_entry["image_uri_small"],
+        card_entry["image_uri_normal"]
     )
 
     response = {

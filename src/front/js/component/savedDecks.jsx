@@ -18,10 +18,10 @@ export const SavedDecksDisplay = () => {
                         <div key={index}>
                             <h1>Deck: {entry.deckname}</h1>
                             <h1>Format: {entry.format}</h1>
-                            {console.log(entry.cards[0])}
-                            <h1>Cards: <h5>{entry.cards.map(cardsindeck => (
-                                `${cardsindeck.cardname}, `
-                            ))}</h5></h1>
+                            <h1>Cards: </h1>
+                            <div>{entry.cards.map(cardsindeck => (
+                                <img src={cardsindeck.image_small} />
+                            ))}</div>
                             <button onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
                             <button onClick={() => handleClick(entry)}>Delete this deck</button>
                         </div>

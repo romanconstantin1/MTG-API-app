@@ -20,7 +20,8 @@ class ScryfallAPIUtils(object):
             "flavor_text": flavor_text,
             "legalities": legalities,
             "artist": cardData["artist"],
-            "image_uri": cardData["image_uris"]["normal"]
+            "image_uri_small": cardData["image_uris"]["small"],
+            "image_uri_normal": cardData["image_uris"]["normal"]
             # need to find a way to store all image uri's
             # but is that even necessary? normal images are 198kb
         }

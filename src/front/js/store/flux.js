@@ -91,8 +91,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 			saveCardToDB: async (cardData) => {
 				const store = getStore()
 				const actions = getActions()
+
+				//check if a card being added is already in the DB
+				console.log(cardData)
+				const savedCardCheck = store.savedCards.find(
+					cardExists => cardExists.image_small === cardData.image_uris.small)
+				if (savedCardCheck) {
+					// in the future, this could potentially just add 1 to the total # in collection
+					console.log(`${savedCardCheck.cardname} is already in the db`)
+					return savedCardCheck
+				}
+				//a function here to transform cardData to same format as the backend
+				//it might make more sense to do the transformation here & have this be the only place where the card format changes
+				//let newSavedList = [...store.savedCards]
+				//newSavedList.push(card)
 				const cardstringify = JSON.stringify(cardData)
-				try{
+				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {
 						method: "POST",
 						headers: {
@@ -104,7 +118,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json()
 					await actions.getSavedCards()
 					return data;
-				}catch(error){
+				} catch(error) {
 					console.log(`Error saving ${cardData.name} to the db`, error)
 				}
 			},
@@ -112,9 +126,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteCard: async (cardData) => {
 				const store = getStore()
 				const actions = getActions()
-				const newSavedList = store.savedCards.filter(cardToFind => {
-					return cardToFind.id !== cardData.id;
-				  	});
+				const newSavedList = store.savedCards.filter(cardToFind => cardToFind.id !== cardData.id);
 				setStore({savedCards: newSavedList});
 
 				try {
@@ -126,8 +138,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					})
 					const data = await resp.json();
-					actions.getSavedCards()
-					console.log(`deleted ${cardData.cardname}`)
+					console.log(`deleted ${cardData.cardname} from saved cards db`)
+					actions.getSavedDecks();
 					return data;
 				} catch (error) {
 					console.log(`Error deleting ${cardData.cardname} from the db`, error)
@@ -203,12 +215,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			// the next 2 functions are basically the same; would be good to find a way to reduce it to one
 			addNewCardToDeck: async (deckId) => {
 				const store = getStore()
 				const actions = getActions()
 				const savedCard = await actions.saveCardToDB(store.searchedCard)
 				console.log(`card id is ${savedCard.id}`)
 				console.log(`deck id is ${deckId}`)
+				
+				let newDeckList = [...store.savedDecks]
+				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
+				if (cardListSearch) {
+					cardListSearch.cards.push(savedCard)
+				}
+				setStore({savedDecks: newDeckList})
+				
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${deckId}/add_card/${savedCard.id}`, {
 						method: "PUT",
@@ -217,11 +238,36 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Content-Type": "application/json"
 						}
 					})
-					const data = await resp.json();
-					actions.getSavedDecks()
+					const data = await resp.json(); 
 					return data;
 				} catch (error) {
 					console.log(`Error adding ${savedCard.cardname} to a deck`, error)
+				}
+			},
+
+			addSavedCardToDeck: async (deckId, cardData) => {
+				const store = getStore()
+				const actions = getActions()
+
+				let newDeckList = [...store.savedDecks]
+				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
+				if (cardListSearch) {
+					cardListSearch.cards.push(cardData)
+				}
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${deckId}/add_card/${cardData.id}`, {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						}
+					})
+					const data = await resp.json();
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${cardData.cardname} to a deck`, error)
 				}
 			}
 			,

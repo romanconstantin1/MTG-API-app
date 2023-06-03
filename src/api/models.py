@@ -86,9 +86,10 @@ class Cards(db.Model):
     card_type = db.Column(db.String(120), unique=False, nullable=False)
     mana_cost = db.Column(db.String(120), unique=False)
     cmc = db.Column(db.Integer, unique=False)
-    image_uri = db.Column(db.String(250), unique=False, nullable=False)
-    oracle_text = db.Column(db.String(250), unique=False, nullable=True)
-    flavor_text = db.Column(db.String(250), unique=False, nullable=True)
+    image_uri_small = db.Column(db.String(250), unique=False, nullable=False)
+    image_uri_normal = db.Column(db.String(250), unique=False, nullable=False)
+    oracle_text = db.Column(db.String(750), unique=False, nullable=True)
+    flavor_text = db.Column(db.String(750), unique=False, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
 
@@ -105,11 +106,12 @@ class Cards(db.Model):
             "legalities": self.legalities,
             "flavor_text": self.flavor_text,
             "artist": self.artist,
-            "image": self.image_uri
+            "image_small": self.image_uri_small,
+            "image_normal": self.image_uri_normal
         } 
     
     @classmethod
-    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, flavor_text, artist, image_uri):
+    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, flavor_text, artist, image_uri_small, image_uri_normal):
         new_card = cls()
         new_card.name = name
         new_card.card_type = card_type
@@ -119,7 +121,8 @@ class Cards(db.Model):
         new_card.legalities = legalities
         new_card.flavor_text = flavor_text
         new_card.artist = artist
-        new_card.image_uri = image_uri
+        new_card.image_uri_small = image_uri_small
+        new_card.image_uri_normal = image_uri_normal
 
         db.session.add(new_card)
         db.session.commit()
