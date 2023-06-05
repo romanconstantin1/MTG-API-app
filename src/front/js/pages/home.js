@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
 import { DeckCreator } from "../component/deckCreator.jsx";
+import { checkFormatLegality } from "../utils/checkLegality";
 import "../../styles/home.css";
 
 export const Home = () => {
@@ -36,7 +37,11 @@ export const Home = () => {
 		} else if (store.searchedCard.name == null){
 			alert("search for a card to add first")
 		} else {
-			actions.addNewCardToDeck(deckID)
+			if (checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false)) {
+				actions.addNewCardToDeck(deckID)
+			} else {
+				alert(`${store.searchedCard.name} is not legal for this deck`)
+			}
 		}
 	}
 

@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 
 import { Context } from "../../store/appContext";
 
+import { checkFormatLegality } from "../../utils/checkLegality";
+
 export const SavedCardInGrid = (cardData) => {
     const { store, actions } = useContext(Context);
     const [ deckID, setDeckID ] = useState('');
@@ -15,7 +17,11 @@ export const SavedCardInGrid = (cardData) => {
         if (deckID === '') {
             alert('Select a deck first');
         } else {
-            actions.addSavedCardToDeck(deckID, cardData);
+            if (checkFormatLegality(cardData, store.savedDecks, deckID, true)) {
+                actions.addSavedCardToDeck(deckID, cardData)
+            } else {
+                alert(`${cardData.cardname} is not legal for this deck`)
+            }
         }
     };
 

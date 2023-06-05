@@ -103,8 +103,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				//a function here to transform cardData to same format as the backend
 				//it might make more sense to do the transformation here & have this be the only place where the card format changes
-				//let newSavedList = [...store.savedCards]
-				//newSavedList.push(card)
+				// but this doesn't work because i need the backend id
+				// this is the same problem as the spotify project. 
+				// if the user can deal with the very minor inconvenience of waiting a second
+				// this will be fine
 				const cardstringify = JSON.stringify(cardData)
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {
