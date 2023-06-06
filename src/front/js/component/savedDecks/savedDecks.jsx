@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 
-import { Context } from "../store/appContext";
+import { Context } from "../../store/appContext";
+import { CardInDeck } from "./cardInDeck.jsx";
 
 export const SavedDecksDisplay = () => {
     const { store, actions } = useContext(Context);
@@ -19,8 +20,8 @@ export const SavedDecksDisplay = () => {
                             <h1>Deck: {entry.deckname}</h1>
                             <h1>Format: {entry.format}</h1>
                             <h1>Cards: </h1>
-                            <div>{entry.cards.map(cardsindeck => (
-                                <img src={cardsindeck.image_small} />
+                            <div className="d-flex p-2">{entry.cards.map(cardindeck => (
+                                <CardInDeck props={cardindeck} />
                             ))}</div>
                             <button onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
                             <button onClick={() => handleClick(entry)}>Delete this deck</button>

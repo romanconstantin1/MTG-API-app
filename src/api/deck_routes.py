@@ -12,23 +12,23 @@ def handle_add():
     deck_entry = request.json
     print(deck_entry)
     Decks.create(
-        deck_entry["deckname"],
-        deck_entry["format"]
+        deck_entry['deckname'],
+        deck_entry['format']
     )
 
     response = {
-        "message": f'{deck_entry["deckname"]} added to db'
+        'message': f'{deck_entry["deckname"]} added to db'
     }
     return jsonify(response), 200
 
-@decks_api.route("/delete_deck/<int:id>", methods=["DELETE"])
+@decks_api.route('/delete_deck/<int:id>', methods=['DELETE'])
 def deck(id):
     deck = Decks.query.get(id)
     if deck == None:
-        return jsonify({"msg": 'Deck not found'}), 404
+        return jsonify({'msg': 'Deck not found'}), 404
 
     deck.remove()
-    response = {"msg": 'Deck deleted'}
+    response = {'msg': 'Deck deleted'}
     return jsonify(response), 200
 
 @decks_api.route('/decks', methods=['GET'])
@@ -38,19 +38,24 @@ def handle_cards():
     decks_list = list(map(lambda deck: deck.serialize(), decks))
 
     response = {
-        "saved_decks": decks_list
+        'saved_decks': decks_list
     }
 
     return jsonify(response), 200
 
-@decks_api.route('/decks/<int:deck_id>/add_card/<int:card_id>', methods=['PUT'])
+@decks_api.route('/decks/add_card/', methods=['PUT'])
 @cross_origin()
-def handle_add_to_deck(deck_id, card_id):
+def handle_add_to_deck():
+    data = request.get_json()
+    print(data)
+    deck_id = data.get('deck_id')
+    card_id = data.get('card_id')
+
     deck = Decks.query.get(deck_id)
     card = Cards.query.get(card_id)
 
     if deck is not None and card is not None:
         deck.add_card(card_id, deck_id)
-        return jsonify("Card added to the deck successfully."), 200
+        return jsonify('Card added to the deck successfully.'), 200
     else:
-        return jsonify("Card or deck not found."), 400
+        return jsonify('Card or deck not found.'), 400

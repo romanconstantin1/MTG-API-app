@@ -233,11 +233,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({savedDecks: newDeckList})
 				
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${deckId}/add_card/${savedCard.id}`, {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
 						method: "PUT",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
+						},
+						body: {
+							'deck_id': JSON.stringify(deckId),
+							'card_id': JSON.stringify(savedCard.id)
 						}
 					})
 					const data = await resp.json(); 
@@ -259,12 +263,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({savedDecks: newDeckList})
 
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + `/api/decks/${deckId}/add_card/${cardData.id}`, {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
 						method: "PUT",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
-						}
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': cardData.id
+						})
 					})
 					const data = await resp.json();
 					return data;

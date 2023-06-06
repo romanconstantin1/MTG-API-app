@@ -1,25 +1,12 @@
 import React, { useContext, useState } from "react";
 
 import { Context } from "../store/appContext.js";
+import { listOfFormats } from "../utils/listOfFormats.js";
 
 export const DeckCreator = () => {
-	const {store, actions} = useContext(Context);
-    const [deckName, setDeckName] = useState('');
-    const [formatName, setFormatName] = useState('Select a format')
-    const [open, setOpen] = useState(false);
-
-    const listOfFormats = [
-        "standard","future","historic",
-        "gladiator","pioneer","explorer",
-        "modern","legacy","pauper",
-        "vintage","penny","commander",
-        "oathbreaker","brawl","historicbrawl",
-        "alchemy","paupercommander","duel",
-        "premodern","predh"
-    ]
-    const handleOpen = () => {
-        setOpen(!open);
-    };
+	const { actions } = useContext(Context);
+    const [ deckName, setDeckName ] = useState('');
+    const [ formatName, setFormatName ] = useState('Select a format')
 
     const handleSetFormat = (name) => {
         setFormatName(name);
@@ -36,30 +23,21 @@ export const DeckCreator = () => {
 	return (
         <div className="d-flex flex-wrap">
             <div className="deckname_input_div">
-                <input  type="text"
-                            placeholder="Create a new deck"
-                            className="deckname_input"
-                            onChange={event => setDeckName(event.target.value)}
-                            value={deckName}
-                    />
+                <input type="text"
+                    placeholder="Create a new deck"
+                    className="deckname_input"
+                    onChange={event => setDeckName(event.target.value)}
+                    value={deckName}
+                />
             </div>
-            <div className="dropdown mx-2">
-                <button onClick={handleOpen}>{formatName}</button>
-                    
-                    {open ? (
-                        <ul className="menu search_dropdown">
-                            {listOfFormats.map(name => (
-                                <li className="menu-item" key={name}>
-                                    <div onClick={() => handleSetFormat(name)}>
-                                        <h6>{name}</h6>
-                                    </div>
-                                    
-                                </li>
-                                ))
-                            };    
-                        </ul>
-                    ) : null}
-            </div>
+            
+            <label htmlFor="new-deck-format-select">Format:</label>
+            <select name="decks" id="deck-select" onChange={(event) => handleSetFormat(event.target.value)}>
+                <option value="">Select a format</option>
+                {listOfFormats.map((formatName) => (
+                <option key={formatName} value={formatName}>{formatName}</option>
+                ))}
+            </select>
             <div>
                 <button onClick={() => handleDeckSave()}>Save this deck</button>
             </div>

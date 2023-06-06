@@ -9,25 +9,24 @@ export const SavedCardInGrid = (cardData) => {
     const [ deckID, setDeckID ] = useState('');
     const cardEntry = cardData.cardData 
 
-    const handleDelete = (cardData) => {
-        actions.deleteCard(cardData);
-    };
+    const handleDelete = (cardData) => actions.deleteCard(cardData);
+    
+    const handleSelectDeck = (IDval) => setDeckID(IDval)
 
     const handleAddToDeck = (cardData) => {
         if (deckID === '') {
             alert('Select a deck first');
+            return;
+        }
+      
+        if (checkFormatLegality(cardData, store.savedDecks, deckID, true)) {
+            actions.addSavedCardToDeck(deckID, cardData);
         } else {
-            if (checkFormatLegality(cardData, store.savedDecks, deckID, true)) {
-                actions.addSavedCardToDeck(deckID, cardData)
-            } else {
-                alert(`${cardData.cardname} is not legal for this deck`)
-            }
+            alert(`${cardData.cardname} is not legal in this deck`);
         }
     };
 
-    const handleSelectDeck = (IDval) => {
-        setDeckID(IDval)
-    }
+    
 
     return (
         <>
@@ -36,6 +35,7 @@ export const SavedCardInGrid = (cardData) => {
                     style={{ width: '200px', height: '300px', borderRadius: '9px' }}
                     onClick={() => console.log(cardEntry)}
             />
+            
             <label htmlFor="deck-select">Add to deck:</label>
             <select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target.value)}>
                 <option value="">Select a saved deck</option>

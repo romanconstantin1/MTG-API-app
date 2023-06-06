@@ -5,8 +5,9 @@ import { htmlNameEncode } from "./htmlNameEncode";
 
 export const CardSearchBar = () => {
     const { store, actions } = useContext(Context)
-    const [query, setQuery] = useState('')
-    const [cards, setCards] = useState([])
+    const [ query, setQuery ] = useState('')
+    const [ cards, setCards ] = useState([])
+    
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -23,7 +24,7 @@ export const CardSearchBar = () => {
         fetchData()
     }, [query])
 
-    const handleClick = (cardname) => {
+    const handleSelect = (cardname) => {
         actions.searchForCard(cardname)
         actions.getAllPrintings(htmlNameEncode(cardname))
     }
@@ -41,12 +42,12 @@ export const CardSearchBar = () => {
             </div>
             <div className="search_dropdown">
             {cards?.map((cardname, index) => 
-                <div key={index} onClick={() => handleClick(cardname)}>
+                <div key={index} onClick={() => handleSelect(cardname)}>
                     <h6>{cardname}</h6>
                 </div>
             )}
             </div>
-            <h5>Try "Mishra," "Urza," "Swords To Plowshares," etc.</h5>
+            <h6>Try "Mishra," "Urza," "Swords To Plowshares," etc.</h6>
         </div>
     )
 }

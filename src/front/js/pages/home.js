@@ -32,16 +32,20 @@ export const Home = () => {
 	}
 
 	const handleAddToDeck = () => {
-		if (deckName == 'Select a deck') {
-			alert("select a deck first")
-		} else if (store.searchedCard.name == null){
-			alert("search for a card to add first")
+		if (deckName === 'Select a deck') {
+		  	alert("Select a deck first");
+		  	return;
+		}
+	  
+		if (store.searchedCard.name === null) {
+		  	alert("Search for a card to add first");
+		  	return;
+		}
+	  
+		if (checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false)) {
+		  	actions.addNewCardToDeck(deckID);
 		} else {
-			if (checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false)) {
-				actions.addNewCardToDeck(deckID)
-			} else {
-				alert(`${store.searchedCard.name} is not legal for this deck`)
-			}
+		  	alert(`${store.searchedCard.name} is not legal for this deck`);
 		}
 	}
 
