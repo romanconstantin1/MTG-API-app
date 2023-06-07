@@ -18,11 +18,14 @@ export const SavedCardInGrid = (cardData) => {
             alert('Select a deck first');
             return;
         }
-      
-        if (checkFormatLegality(cardData, store.savedDecks, deckID, true)) {
+        
+        //returns true if card is legal in the deck's format, deck format name if not
+        const checkIfLegal = checkFormatLegality(cardData, store.savedDecks, deckID, true);
+
+        if (checkIfLegal === true) {
             actions.addSavedCardToDeck(deckID, cardData);
         } else {
-            alert(`${cardData.cardname} is not legal in this deck`);
+            alert(`${cardData.cardname} is not legal in the ${checkIfLegal} format`);
         }
     };
 
@@ -35,7 +38,7 @@ export const SavedCardInGrid = (cardData) => {
                     style={{ width: '200px', height: '300px', borderRadius: '9px' }}
                     onClick={() => console.log(cardEntry)}
             />
-            
+
             <label htmlFor="deck-select">Add to deck:</label>
             <select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target.value)}>
                 <option value="">Select a saved deck</option>

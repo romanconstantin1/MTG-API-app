@@ -107,7 +107,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// this is the same problem as the spotify project. 
 				// if the user can deal with the very minor inconvenience of waiting a second
 				// this will be fine
-				const cardstringify = JSON.stringify(cardData)
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {
 						method: "POST",
@@ -115,7 +114,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
 						},
-						body: cardstringify
+						body: JSON.stringify(cardData)
 					})
 					const data = await resp.json()
 					await actions.getSavedCards()
@@ -131,6 +130,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const newSavedList = store.savedCards.filter(cardToFind => cardToFind.id !== cardData.id);
 				setStore({savedCards: newSavedList});
 
+
+				//update this to pass json message instead of value in url
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + `/api/delete_card/${cardData.id}`, {
 						method: "DELETE",
@@ -168,10 +169,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			saveDeckToDB: async (deckName, formatName) => {
 				const store = getStore()
 				const actions = getActions()
+
 				const newDeck = {"deckname": deckName, "format": formatName, "cards": []}
-				const deckStringify = JSON.stringify(newDeck)
-				
 				const newDeckList = [...store.savedDecks]
+
 				newDeckList.push(newDeck)
 				setStore({savedDecks: newDeckList})
 
@@ -182,7 +183,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
 						},
-						body: deckStringify
+						body: JSON.stringify(newDeck)
 					})
 					const data = await resp.json()
 					actions.getSavedDecks()
@@ -217,7 +218,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			// the next 2 functions are basically the same; would be good to find a way to reduce it to one
+			// the next few functions are basically the same; would be good to find a way to reduce it to one
+			// or add more modularity to how the functions... function
 			addNewCardToDeck: async (deckId) => {
 				const store = getStore()
 				const actions = getActions()
@@ -239,10 +241,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json"
 						},
-						body: {
-							'deck_id': JSON.stringify(deckId),
-							'card_id': JSON.stringify(savedCard.id)
-						}
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': savedCard.id
+						})
 					})
 					const data = await resp.json(); 
 					return data;
@@ -251,10 +253,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			addSavedCardToDeck: async (deckId, cardData) => {
+			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
 				const actions = getActions()
-
+				if (quantity == null) {
+					quantity = 1
+				}
 				let newDeckList = [...store.savedDecks]
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
@@ -271,10 +275,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({
 							'deck_id': deckId,
+							'card_id': cardData.id,
+							'quantity': quantity
+						})
+					})
+					const data = await resp.json();
+					console.log(data)
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${cardData.cardname} to a deck`, error)
+				}
+			},
+
+			deleteCardFromDeck: async (deckId, cardData) => {
+				const store = getStore()
+				const actions = getActions()
+
+				let newDeckList = [...store.savedDecks]
+				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
+				if (cardListSearch) {
+					const cardIndex = cardListSearch.cards.indexOf(cardData)
+					cardListSearch.cards.splice(cardIndex, 1)
+				}
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/delete_card/', {
+						method: "DELETE",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
 							'card_id': cardData.id
 						})
 					})
 					const data = await resp.json();
+					return data;
+				} catch (error) {
+					console.log(`Error removing ${cardData.cardname} from a deck`, error)
+				}
+			},
+
+			changeCardQuantity: async (deckId, cardData, quantity) => {
+				const store = getStore()
+				const actions = getActions()
+
+				let newDeckList = [...store.savedDecks]
+				console.log(newDeckList)
+				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
+				if (cardListSearch) {
+					const cardIndex = cardListSearch.cards.indexOf(cardData)
+					cardListSearch.cards[cardIndex].quantity += quantity
+				}
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/change_card_qty/', {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': cardData.id,
+							'quantity': quantity
+						})
+					})
+					const data = await resp.json();
+					console.log(data)
 					return data;
 				} catch (error) {
 					console.log(`Error adding ${cardData.cardname} to a deck`, error)

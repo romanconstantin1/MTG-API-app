@@ -21,10 +21,9 @@ class Users(db.Model):
             "username": self.username
         }
 
-cards_in_decks = db.Table('cards_in_decks',
-    # db.Column("id", db.Integer, primary_key=True),    
-    db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
-    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
+cards_in_decks = db.Table('cards_in_decks',  
+    db.Column("card_id", db.Integer, db.ForeignKey("cards.id")),
+    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id")),
     db.Column("quantity", db.Integer)
 )
 
@@ -37,14 +36,27 @@ class Decks(db.Model):
 
     def __repr__(self):
         return f'<Deck: {self.name}>'
-    
+
     def serialize(self):
+        serialized_cards = []
+        for card in self.cards:
+            serialized_card = card.serialize()
+            serialized_card['quantity'] = self.get_card_quantity(card)
+            serialized_cards.append(serialized_card)
+
         return {
             "id": self.id,
             "deckname": self.name,
             "format": self.format,
-            "cards": [card.serialize() for card in self.cards]
+            "cards": serialized_cards
         }
+
+    def get_card_quantity(self, card):
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
+        if existing_card:
+            return existing_card.quantity
+        else:
+            return 0
 
     @classmethod
     def create(cls, name, format):
@@ -67,16 +79,31 @@ class Decks(db.Model):
     def read_all(cls):
         return cls.query.all()
     
-    def add_card(cls, card_id, deck_id):
-        card = Cards.query.get(card_id)
-        deck = cls.query.get(deck_id)
+    def add_card(cls, card, deck, quantity):
 
-        if card is not None and deck is not None:
-            deck.cards.append(card)
-            db.session.commit()
-            return "Card added to the deck successfully."
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=deck.id).first()
+        if existing_card:
+            new_quantity = existing_card.quantity + quantity
+            print(f'new quantity is {new_quantity}')
+            db.session.execute(cards_in_decks.update().where(
+                cards_in_decks.c.card_id == card.id and cards_in_decks.c.deck_id == deck.id
+            ).values(quantity=new_quantity))
         else:
-            return "Card or deck not found."
+            deck.cards.append(card)
+            new_card_in_deck = cards_in_decks.insert().values(card_id=card.id, deck_id=deck.id, quantity=quantity)
+            db.session.execute(new_card_in_deck)
+
+        db.session.commit()
+        return cards_in_decks
+   
+    def change_card_qty(cls, card, deck, quantity):
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=deck.id).first()
+        new_quantity = existing_card.quantity + quantity
+        print(f'new quantity is {new_quantity}')
+        db.session.execute(cards_in_decks.update().where(
+            cards_in_decks.c.card_id == card.id and cards_in_decks.c.deck_id == deck.id
+        ).values(quantity=new_quantity))
+
     
 # check to see if rules text, flavor text, etc., can be made nullable for cards missing one/both
 # also consider p/t, planeswalker loyaly?

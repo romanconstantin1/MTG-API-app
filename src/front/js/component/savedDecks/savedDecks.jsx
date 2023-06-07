@@ -7,7 +7,7 @@ import { CardInDeck } from "./cardInDeck.jsx";
 export const SavedDecksDisplay = () => {
     const { store, actions } = useContext(Context);
 
-    const handleClick = (deckData) => {
+    const handleDeleteDeck = (deckData) => {
         actions.deleteDeck(deckData)
     }
     
@@ -21,10 +21,10 @@ export const SavedDecksDisplay = () => {
                             <h1>Format: {entry.format}</h1>
                             <h1>Cards: </h1>
                             <div className="d-flex p-2">{entry.cards.map(cardindeck => (
-                                <CardInDeck props={cardindeck} />
+                                <CardInDeck props={[cardindeck, entry]} />
                             ))}</div>
                             <button onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
-                            <button onClick={() => handleClick(entry)}>Delete this deck</button>
+                            <button onClick={() => handleDeleteDeck(entry)}>Delete this deck</button>
                         </div>
                     ))}
                 </div>

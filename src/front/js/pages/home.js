@@ -2,50 +2,43 @@ import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
-import { DeckCreator } from "../component/deckCreator.jsx";
 import { checkFormatLegality } from "../utils/checkLegality";
 import "../../styles/home.css";
 
 export const Home = () => {
-	const { store, actions } = useContext(Context);
-	const [deckName, setDeckName] = useState('Select a deck')
+	const { store, actions } = useContext(Context)
 	const [deckID, setDeckID] = useState('')
-    const [open, setOpen] = useState(false)
 
 	// const handleClick = () => {
 	// 	actions.getRandomCards()
 	// }
 
-	const handleOpen = () => {
-        setOpen(!open);
-    };
-	const handleSetDeckName = (name) => {
-        setDeckName(name);
-    }
 
-	const handleSetDeckID = (id) => {
-		setDeckID(id);
-	}
+	const handleSelectDeck = (IDval) => setDeckID(IDval)
 
 	const handleSaveCard = () => {
-		actions.saveCardToDB(store.searchedCard)
+		if (JSON.stringify(store.searchedCard) !== JSON.stringify({name: null, image_uris: {normal: null}})) {
+			actions.saveCardToDB(store.searchedCard)
+		} else {
+			alert('Search for a card to add first')
+		}
 	}
 
 	const handleAddToDeck = () => {
-		if (deckName === 'Select a deck') {
-		  	alert("Select a deck first");
-		  	return;
-		}
+		if (deckID === '') {
+            alert('Select a deck first');
+            return;
+        }
 	  
 		if (store.searchedCard.name === null) {
-		  	alert("Search for a card to add first");
+		  	alert('Search for a card to add first');
 		  	return;
 		}
-	  
-		if (checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false)) {
+		const checkIfLegal = checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false);
+		if (checkIfLegal === true) {
 		  	actions.addNewCardToDeck(deckID);
 		} else {
-		  	alert(`${store.searchedCard.name} is not legal for this deck`);
+		  	alert(`${store.searchedCard.name} is not legal in the ${checkIfLegal} format`);
 		}
 	}
 
@@ -58,9 +51,17 @@ export const Home = () => {
 			<h1>{store.randomCard}</h1> */}
 			<div>
 				<h1>{store.searchedCard.name}</h1>
+				<label htmlFor="deck-select">Add to deck:</label>
+				<select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target.value)}>
+					<option value="">Select a saved deck</option>
+					{store.savedDecks.map((deckEntry) => (
+					<option key={deckEntry.id} value={deckEntry.id}>{deckEntry.deckname}</option>
+					))}
+				</select>
+				
+				<button onClick={() => handleAddToDeck()}>Add to deck</button>
 				<button onClick={() => handleSaveCard()}>Save this card to collection</button>
-				<button onClick={() => handleAddToDeck()}>Add to deck:</button>
-				<div className="dropdown mx-2">
+				{/* <div className="dropdown mx-2">
 					<button onClick={handleOpen}>{deckName}</button>
 						{open ? (
 							<ul className="menu search_dropdown">
@@ -80,7 +81,7 @@ export const Home = () => {
 								}    
 							</ul>
 						) : null}
-            	</div>
+            	</div> */}
 			</div>
 			
 			<img src={store.searchedCard.image_uris.normal} />

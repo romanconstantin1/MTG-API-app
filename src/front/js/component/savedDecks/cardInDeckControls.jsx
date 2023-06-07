@@ -4,18 +4,23 @@ import { Context } from "../../store/appContext";
 
 export const CardInDeckControls = (props) => {
     const { store, actions } = useContext(Context)
-    const cardData = props.props
-    
+    const cardData = props.props[0]
+    const deckData = props.props[1]
+
     const handleAddCard = () =>{
-        console.log(`add 1 ${cardData.cardname}`)
+        actions.changeCardQuantity(deckData.id, cardData, 1)
     }
 
     const handleSubtractCard = () => {
-        console.log(`subtract 1 ${cardData.cardname}`)
+        if (cardData.quantity - 1 <= 0) {
+            alert("delete this card")
+        } else {
+            actions.changeCardQuantity(deckData.id, cardData, -1)
+        }
     }
 
     const handleDeleteCard = () => {
-        console.log(`delete ${cardData.cardname}`)
+        actions.deleteCardFromDeck(deckData.id, cardData)
     }
 
     return (
