@@ -9,13 +9,15 @@ export const CardInDeckControls = (props) => {
 
     const handleAddCard = () =>{
         actions.changeCardQuantity(deckData.id, cardData, 1)
+        console.log(cardData.quantity)
     }
 
     const handleSubtractCard = () => {
         if (cardData.quantity - 1 <= 0) {
-            alert("delete this card")
+            actions.deleteCardFromDeck(deckData.id, cardData)
         } else {
             actions.changeCardQuantity(deckData.id, cardData, -1)
+            console.log(cardData.quantity)
         }
     }
 

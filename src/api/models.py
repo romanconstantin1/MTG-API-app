@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import and_
 
 db = SQLAlchemy()
 
@@ -22,8 +23,8 @@ class Users(db.Model):
         }
 
 cards_in_decks = db.Table('cards_in_decks',  
-    db.Column("card_id", db.Integer, db.ForeignKey("cards.id")),
-    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id")),
+    db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
+    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
     db.Column("quantity", db.Integer)
 )
 
@@ -70,6 +71,7 @@ class Decks(db.Model):
         return new_deck
     
     def remove(self):
+
         db.session.delete(self)
         db.session.commit()
 
@@ -79,30 +81,43 @@ class Decks(db.Model):
     def read_all(cls):
         return cls.query.all()
     
-    def add_card(cls, card, deck, quantity):
-
-        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=deck.id).first()
+    def add_card(self, card, quantity):
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
         if existing_card:
             new_quantity = existing_card.quantity + quantity
             print(f'new quantity is {new_quantity}')
             db.session.execute(cards_in_decks.update().where(
-                cards_in_decks.c.card_id == card.id and cards_in_decks.c.deck_id == deck.id
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
             ).values(quantity=new_quantity))
         else:
-            deck.cards.append(card)
-            new_card_in_deck = cards_in_decks.insert().values(card_id=card.id, deck_id=deck.id, quantity=quantity)
+            new_card_in_deck = cards_in_decks.insert().values(card_id=card.id, deck_id=self.id, quantity=quantity)
             db.session.execute(new_card_in_deck)
 
         db.session.commit()
-        return cards_in_decks
+        return None
    
-    def change_card_qty(cls, card, deck, quantity):
-        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=deck.id).first()
+    def change_card_qty(self, card, quantity):
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
         new_quantity = existing_card.quantity + quantity
         print(f'new quantity is {new_quantity}')
         db.session.execute(cards_in_decks.update().where(
-            cards_in_decks.c.card_id == card.id and cards_in_decks.c.deck_id == deck.id
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
         ).values(quantity=new_quantity))
+
+        db.session.commit()
+        return None
+    
+    def delete_card(self, card):
+        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
+        if existing_card:
+            db.session.execute(cards_in_decks.delete().where(
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
+            ))
+            db.session.commit()
+            print()
+            return True
+        else:
+            return False
 
     
 # check to see if rules text, flavor text, etc., can be made nullable for cards missing one/both

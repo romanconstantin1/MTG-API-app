@@ -220,10 +220,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// the next few functions are basically the same; would be good to find a way to reduce it to one
 			// or add more modularity to how the functions... function
-			addNewCardToDeck: async (deckId) => {
+			addNewCardToDeck: async (deckId, quantity) => {
 				const store = getStore()
 				const actions = getActions()
 				const savedCard = await actions.saveCardToDB(store.searchedCard)
+				if (quantity == undefined) {
+					quantity = 1
+				}
 				console.log(`card id is ${savedCard.id}`)
 				console.log(`deck id is ${deckId}`)
 				
@@ -243,7 +246,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({
 							'deck_id': deckId,
-							'card_id': savedCard.id
+							'card_id': savedCard.id,
+							'quantity': quantity
 						})
 					})
 					const data = await resp.json(); 
@@ -256,7 +260,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
 				const actions = getActions()
-				if (quantity == null) {
+				if (quantity == undefined) {
 					quantity = 1
 				}
 				let newDeckList = [...store.savedDecks]
@@ -312,6 +316,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					})
 					const data = await resp.json();
+					console.log(data)
 					return data;
 				} catch (error) {
 					console.log(`Error removing ${cardData.cardname} from a deck`, error)
