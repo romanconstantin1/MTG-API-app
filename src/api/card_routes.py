@@ -27,9 +27,13 @@ def handle_add():
     )
 
     response = {
-        "message": f'{card_entry["name"]} added to db',
-        "card_name": card_entry["name"],
+        "artist": card_entry["artist"],
+        "card_type": card_entry["card_type"], 
+        "cardname": card_entry["name"],
         "id": card_in_db.id,
+        "image_normal": card_entry["image_uri_normal"],
+        "image_small": card_entry["image_uri_small"],
+        "legalities": card_entry["legalities"],
         "type": card_entry["card_type"],
         "mana_cost": card_entry["mana_cost"],
         "oracle_text": card_entry["oracle_text"],

@@ -58,9 +58,9 @@ def handle_add_to_deck():
 
     if deck is not None and card is not None:
         deck.add_card(card, quantity)
-        return jsonify('Card added to the deck successfully.'), 200
+        return jsonify('db: Card added to the deck successfully.'), 200
     else:
-        return jsonify('Card or deck not found.'), 400
+        return jsonify('db: Card or deck not found.'), 400
     
 @decks_api.route('/decks/delete_card', methods=['DELETE'])
 @cross_origin()
@@ -77,9 +77,9 @@ def handle_remove_from_deck():
 
     if deck is not None and card is not None:
         deck.delete_card(card)
-        return jsonify('Card removed from the deck successfully.'), 200
+        return jsonify({'msg':'Card removed from the deck successfully.'}), 200
     else:
-        return jsonify('Card or deck not found.'), 400
+        return jsonify({'msg':'Card or deck not found.'}), 400
     
 @decks_api.route('/decks/change_card_qty', methods=['PUT'])
 @cross_origin()
@@ -95,6 +95,6 @@ def handle_change_card_qty():
     
     if deck is not None and card is not None:
         deck.change_card_qty(card, quantity)
-        return jsonify('Card quantity changed successfully.'), 200
+        return jsonify({'msg':'Card quantity changed successfully.'}), 200
     else:
-        return jsonify('Card or deck not found.'), 400
+        return jsonify({'msg':'Card or deck not found.'}), 400

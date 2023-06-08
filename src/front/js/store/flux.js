@@ -227,15 +227,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (quantity == undefined) {
 					quantity = 1
 				}
+				savedCard.quantity = quantity
 				console.log(`card id is ${savedCard.id}`)
 				console.log(`deck id is ${deckId}`)
+				console.log(`card qty is ${savedCard.quantity}`)
+				console.log(savedCard)
 				
 				let newDeckList = [...store.savedDecks]
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
-					cardListSearch.cards.push(savedCard)
+					await cardListSearch.cards.push(savedCard)
 				}
-				setStore({savedDecks: newDeckList})
+				console.log(newDeckList)
+				await setStore({savedDecks: newDeckList})
 				
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
@@ -263,6 +267,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (quantity == undefined) {
 					quantity = 1
 				}
+				cardData.quantity = quantity
+				console.log(cardData)
 				let newDeckList = [...store.savedDecks]
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
