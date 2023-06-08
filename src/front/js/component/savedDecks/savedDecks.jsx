@@ -25,6 +25,7 @@ export const SavedDecksDisplay = () => {
                             ))}</div>
                             <button onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
                             <button onClick={() => handleDeleteDeck(entry)}>Delete this deck</button>
+                            <button onClick={() => console.log(entry)}>Test</button>
                         </div>
                     ))}
                 </div>

@@ -2,14 +2,21 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Context } from "../../store/appContext";
 
+import { CheckMaxQty } from "../../utils/checkMaxQty";
+
 export const CardInDeckControls = (props) => {
     const { store, actions } = useContext(Context)
     const cardData = props.props[0]
     const deckData = props.props[1]
 
-    const handleAddCard = () =>{
-        actions.changeCardQuantity(deckData.id, cardData, 1)
-        console.log(cardData.quantity)
+    const handleAddCard = () => {
+        const maxCheck = CheckMaxQty(deckData.format, cardData, cardData.quantity + 1)
+        if (maxCheck === true) {
+            actions.changeCardQuantity(deckData.id, cardData, 1)
+        } else {
+            alert(maxCheck)
+        }
+        
     }
 
     const handleSubtractCard = () => {
