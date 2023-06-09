@@ -8,8 +8,8 @@ import "../../styles/home.css";
 
 export const Home = () => {
 	const { store, actions } = useContext(Context)
-	const [deckID, setDeckID] = useState('')
-
+	const [ deckID, setDeckID ] = useState('')
+	const [ cardQty, setCardQty ] = useState(undefined)
 	// const handleClick = () => {
 	// 	actions.getRandomCards()
 	// }
@@ -25,7 +25,9 @@ export const Home = () => {
 		}
 	}
 
-	const handleAddToDeck = () => {
+	const handleCardQty = (qty) => setCardQty(qty)
+
+	const handleAddToDeck = async () => {
 		if (deckID === '') {
             alert('Select a deck first');
             return;
@@ -37,7 +39,8 @@ export const Home = () => {
 		}
 		const checkIfLegal = checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false);
 		if (checkIfLegal === true) {
-		  	actions.addNewCardToDeck(deckID);
+		  	const addedCard = await actions.addNewCardToDeck(deckID, cardQty);
+			console.log(addedCard)
 		} else {
 		  	alert(`${store.searchedCard.name} is not legal in the ${checkIfLegal} format`);
 		}
@@ -52,37 +55,20 @@ export const Home = () => {
 			<h1>{store.randomCard}</h1> */}
 			<div>
 				<h1>{store.searchedCard.name}</h1>
-				<label htmlFor="deck-select">Add to deck:</label>
+
+				<button className = "mx-2" onClick={() => handleAddToDeck()}>Add to deck</button>
 				<select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target.value)}>
 					<option value="">Select a saved deck</option>
 					{store.savedDecks.map((deckEntry) => (
 					<option key={deckEntry.id} value={deckEntry.id}>{deckEntry.deckname}</option>
 					))}
 				</select>
-				
-				<button onClick={() => handleAddToDeck()}>Add to deck</button>
-				<button onClick={() => handleSaveCard()}>Save this card to collection</button>
-				{/* <div className="dropdown mx-2">
-					<button onClick={handleOpen}>{deckName}</button>
-						{open ? (
-							<ul className="menu search_dropdown">
-								{store.savedDecks.map(entry => (
-									<>
-									<li className="menu-item" key={entry.id}>
-										<div onClick={() => {
-											handleSetDeckName(entry.deckname),
-											handleSetDeckID(entry.id)
-											}}>
-											<h6>{entry.deckname}</h6>
-										</div>
-										
-									</li>
-									</>
-									))
-								}    
-							</ul>
-						) : null}
-            	</div> */}
+				<select className="mx-2" name="decks" id="quantity-select" onChange={(event) => handleCardQty(event.target.value)}>
+					<option value="test">(optional) Card quantity</option>
+				</select>
+			</div>
+			<div>
+				<button className="m-2" onClick={() => handleSaveCard()}>Save this card to collection</button>
 			</div>
 			
 			<img src={store.searchedCard.image_uris.normal} />

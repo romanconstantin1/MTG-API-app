@@ -34,9 +34,9 @@ export const CardInDeckControls = (props) => {
 
     return (
         <>
-            <button onClick={() => handleAddCard()}>+</button>
+            <button className="mx-1" onClick={() => handleAddCard()}>+</button>
             <button onClick={() => handleSubtractCard()}>-</button>
-            <button onClick={() => handleDeleteCard()}>Delete this card</button>
+            <button className="mx-1" onClick={() => handleDeleteCard()}>Delete this card</button>
         </>
     )
 }

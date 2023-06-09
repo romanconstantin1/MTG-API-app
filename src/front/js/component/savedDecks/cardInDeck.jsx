@@ -10,7 +10,7 @@ export const CardInDeck = (props) => {
     const deckData = props.props[1]
 
     return (
-        <div className="px-2">
+        <div className="text-center px-2">
             <div className="card_display mx-auto">
                 <img src={cardData.image_small} />
             </div>

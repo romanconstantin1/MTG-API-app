@@ -4,6 +4,7 @@ import { Context } from "../../store/appContext";
 
 import { checkFormatLegality } from "../../utils/checkLegality";
 import { checkMaxQty } from "../../utils/checkMaxQty";
+import { detailedLog } from "../../utils/detailedLog";
 
 export const SavedCardInGrid = (cardData) => {
     const { store, actions } = useContext(Context);
@@ -20,21 +21,18 @@ export const SavedCardInGrid = (cardData) => {
         setDeckID(selectedDeckId)
         setDeckFormat(selectedDeckData.format)
     }
+
     const handleAddToDeck = (cardData) => {
         if (deckID === '') {
             alert('Select a deck first');
             return;
         }
-
+        detailedLog(cardData)
         //returns true if card is legal in the deck's format, deck format name if not
         const checkIfLegal = checkFormatLegality(cardData, store.savedDecks, deckID, true);
         //returns true if adding a card does not exceed the max quantity in the deck
-        const maxCheck = checkMaxQty(deckFormat, cardData, cardData.quantity + 1)
-
-        if (checkIfLegal === true && maxCheck === true) {
+        if (checkIfLegal === true) {
             actions.addSavedCardToDeck(deckID, cardData);
-        } else if (maxCheck !== true) {
-            alert(maxCheck)
         } else {
             alert(`${cardData.cardname} is not legal in the ${checkIfLegal} format`);
         }
@@ -43,23 +41,27 @@ export const SavedCardInGrid = (cardData) => {
     
 
     return (
-        <>
-            <img
-                src={cardEntry.image_small}
-                    style={{ width: '200px', height: '300px', borderRadius: '9px' }}
-                    onClick={() => console.log(cardEntry)}
-            />
+        <div className="text-center">
+            <div>
+                <img
+                    src={cardEntry.image_small}
+                        style={{ width: '200px', height: '300px', borderRadius: '9px' }}
+                        onClick={() => console.log(cardEntry)}
+                />
+            </div>
+            <div className="m-2">
+                <select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target)}>
+                    <option value="">Select a saved deck</option>
+                    {store.savedDecks.map((deckEntry) => (
+                    <option key={deckEntry.id} value={deckEntry.id}>{deckEntry.deckname}</option>
+                    ))}
+                </select>
 
-            <label htmlFor="deck-select">Add to deck:</label>
-            <select name="decks" id="deck-select" onChange={(event) => handleSelectDeck(event.target)}>
-                <option value="">Select a saved deck</option>
-                {store.savedDecks.map((deckEntry) => (
-                <option key={deckEntry.id} value={deckEntry.id}>{deckEntry.deckname}</option>
-                ))}
-            </select>
-
-            <button onClick={() => handleAddToDeck(cardEntry)}>Add to deck</button>
-            <button onClick={() => handleDelete(cardEntry)}>Delete this card</button>
-        </>
+                <button className="ms-1" onClick={() => handleAddToDeck(cardEntry)}>Add to deck</button>
+            </div>
+            <div className="m-2">
+                <button onClick={() => handleDelete(cardEntry)}>Delete this card</button>
+            </div>
+        </div>
     )
 }

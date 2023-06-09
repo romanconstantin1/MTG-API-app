@@ -23,9 +23,9 @@ export const SavedDecksDisplay = () => {
                             <div className="d-flex p-2">{entry.cards.map(cardindeck => (
                                 <CardInDeck props={[cardindeck, entry]} />
                             ))}</div>
-                            <button onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
+                            <button className="mx-1" onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
                             <button onClick={() => handleDeleteDeck(entry)}>Delete this deck</button>
-                            <button onClick={() => console.log(entry)}>Test</button>
+                            <button className="mx-1" onClick={() => console.log(entry)}>Test</button>
                         </div>
                     ))}
                 </div>

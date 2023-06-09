@@ -1,4 +1,5 @@
 import { detailedLog } from "../utils/detailedLog";
+import { checkMaxQty } from "../utils/checkMaxQty";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -231,6 +232,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				let newDeckList = [...store.savedDecks]
 				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+
+				// const savedCardCheck = findDeck.cards.find(
+				// 	cardExists => cardExists.image_small === cardData.image_uris.small)
+				// if (savedCardCheck) {
+				// 	// in the future, this could potentially just add 1 to the total # in collection
+				// 	console.log(`${savedCardCheck.cardname} is already in the db`)
+				// 	return savedCardCheck
+				// }
 				
 				if (findDeck) {
 					const findCardInDeck = await findDeck.cards.find(cardInDeck => cardInDeck.id == savedCard.id)
@@ -270,23 +279,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
-				const actions = getActions()
-				if (quantity == undefined) {
-					quantity = 1
-				}
-				cardData.quantity = quantity
-
 				let newDeckList = [...store.savedDecks]
 				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+				const findCardInDeck = findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)
 
-				if (findDeck) {
-					const findCardInDeck = findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)
-					if (findCardInDeck) {
+				if (quantity === undefined) {
+					quantity = 1
+				}
+
+				if (findCardInDeck) {
+					const maxCheck = checkMaxQty(findDeck.format, findCardInDeck, findCardInDeck.quantity + 1)
+					if (maxCheck == true) {
 						findCardInDeck.quantity += quantity
 					} else {
-						findDeck.cards.push(cardData)
+						return alert(maxCheck)
 					}
+				} else {
+					cardData.quantity = quantity
+					findDeck.cards.push(cardData)
 				}
+
 				setStore({savedDecks: newDeckList})
 
 				try {
@@ -302,6 +314,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'quantity': quantity
 						})
 					})
+					
 					const data = await resp.json();
 					console.log(data)
 					return data;
