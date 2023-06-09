@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 
 import { checkFormatLegality } from "../utils/checkLegality";
+import { checkMaxQty } from "../utils/checkMaxQty";
 import "../../styles/home.css";
 
 export const Home = () => {

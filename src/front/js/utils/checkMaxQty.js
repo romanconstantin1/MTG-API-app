@@ -15,7 +15,7 @@ const anyNumberOf = [
     default: 4
   };
   
-  export const CheckMaxQty = (deckFormat, cardData, cardQty) => {
+  export const checkMaxQty = (deckFormat, cardData, cardQty) => {
     if (anyNumberOf.includes(cardData.cardname) || cardData.card_type.includes("Basic Land")) {
       return true;
     }

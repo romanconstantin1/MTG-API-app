@@ -1,3 +1,5 @@
+import { detailedLog } from "../utils/detailedLog";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -227,17 +229,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (quantity == undefined) {
 					quantity = 1
 				}
-				savedCard.quantity = quantity
-				console.log(`card id is ${savedCard.id}`)
-				console.log(`deck id is ${deckId}`)
-				console.log(`card qty is ${savedCard.quantity}`)
-				console.log(savedCard)
-				
 				let newDeckList = [...store.savedDecks]
-				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
-				if (cardListSearch) {
-					await cardListSearch.cards.push(savedCard)
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+				
+				if (findDeck) {
+					const findCardInDeck = await findDeck.cards.find(cardInDeck => cardInDeck.id == savedCard.id)
+					if (findCardInDeck) {
+						findCardInDeck.quantity += quantity
+					} else {
+						savedCard.quantity = quantity
+						await findDeck.cards.push(savedCard)
+					}
 				}
+				
+				// if (findDeck) {
+				// 	await findDeck.cards.push(savedCard)
+				// }
 				console.log(newDeckList)
 				await setStore({savedDecks: newDeckList})
 				
@@ -268,11 +275,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 					quantity = 1
 				}
 				cardData.quantity = quantity
-				console.log(cardData)
+
 				let newDeckList = [...store.savedDecks]
-				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
-				if (cardListSearch) {
-					cardListSearch.cards.push(cardData)
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+
+				if (findDeck) {
+					const findCardInDeck = findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)
+					if (findCardInDeck) {
+						findCardInDeck.quantity += quantity
+					} else {
+						findDeck.cards.push(cardData)
+					}
 				}
 				setStore({savedDecks: newDeckList})
 
