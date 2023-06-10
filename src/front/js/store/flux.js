@@ -288,7 +288,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 				if (findCardInDeck) {
-					const maxCheck = checkMaxQty(findDeck.format, findCardInDeck, findCardInDeck.quantity + 1)
+					const maxCheck = checkMaxQty(findDeck, findCardInDeck, findCardInDeck.quantity + 1)
 					if (maxCheck == true) {
 						findCardInDeck.quantity += quantity
 					} else {

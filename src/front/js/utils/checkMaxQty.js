@@ -15,14 +15,17 @@ const anyNumberOf = [
     default: 4
   };
   
-  export const checkMaxQty = (deckFormat, cardData, cardQty) => {
+  export const checkMaxQty = (deckData, cardData, cardQty) => {
     if (anyNumberOf.includes(cardData.cardname) || cardData.card_type.includes("Basic Land")) {
       return true;
     }
   
-    const maxQty = getMaxQuantity(deckFormat, cardData);
+    const maxQty = getMaxQuantity(deckData.format, cardData);
     if (cardQty > maxQty) {
-      return `A ${deckFormat} deck cannot contain more than ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}`;
+      return (
+        `"${deckData.deckname}" already contains ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.` + 
+        ` A ${deckData.format} deck cannot contain more than ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.`
+        );
     }
 
     return true;

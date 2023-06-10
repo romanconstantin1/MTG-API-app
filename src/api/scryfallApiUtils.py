@@ -1,11 +1,15 @@
 class ScryfallAPIUtils(object):
     def create_db_card(cardData):
         legalities = []
+        is_restricted = False
         flavor_text = ""
         oracle_text = ""
         for entry in cardData["legalities"]:
             if cardData["legalities"][entry] == "legal":
                 legalities.append(entry)
+            if cardData["legalities"][entry] == "restricted":
+                legalities.append(entry)
+                is_restricted = True
             if "flavor_text" in cardData:
                 flavor_text = cardData["flavor_text"]
             if "oracle_text" in cardData:
@@ -19,6 +23,7 @@ class ScryfallAPIUtils(object):
             "oracle_text": oracle_text,
             "flavor_text": flavor_text,
             "legalities": legalities,
+            "is_restricted": is_restricted,
             "artist": cardData["artist"],
             "image_uri_small": cardData["image_uris"]["small"],
             "image_uri_normal": cardData["image_uris"]["normal"]

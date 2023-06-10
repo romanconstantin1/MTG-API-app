@@ -130,6 +130,7 @@ class Cards(db.Model):
     cmc = db.Column(db.Integer, unique=False)
     image_uri_small = db.Column(db.String(250), unique=False, nullable=False)
     image_uri_normal = db.Column(db.String(250), unique=False, nullable=False)
+    is_restricted = db.Column(db.String(10), unique=False)
     oracle_text = db.Column(db.String(750), unique=False, nullable=True)
     flavor_text = db.Column(db.String(750), unique=False, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
@@ -146,6 +147,7 @@ class Cards(db.Model):
             "mana_cost": self.mana_cost,
             "oracle_text": self.oracle_text,
             "legalities": self.legalities,
+            "is_restricted": self.is_restricted,
             "flavor_text": self.flavor_text,
             "artist": self.artist,
             "image_small": self.image_uri_small,
@@ -153,7 +155,7 @@ class Cards(db.Model):
         } 
     
     @classmethod
-    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, flavor_text, artist, image_uri_small, image_uri_normal):
+    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, artist, image_uri_small, image_uri_normal):
         new_card = cls()
         new_card.name = name
         new_card.card_type = card_type
@@ -161,6 +163,7 @@ class Cards(db.Model):
         new_card.cmc = cmc
         new_card.oracle_text = oracle_text
         new_card.legalities = legalities
+        new_card.is_restricted = is_restricted
         new_card.flavor_text = flavor_text
         new_card.artist = artist
         new_card.image_uri_small = image_uri_small
