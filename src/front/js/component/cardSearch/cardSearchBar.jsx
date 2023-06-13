@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../store/appContext";
-
-import { htmlNameEncode } from "./htmlNameEncode";
+import { Context } from "../../store/appContext";
+import { Link } from "react-router-dom";
+import { htmlNameEncode } from "../../utils/htmlNameEncode";
 
 export const CardSearchBar = () => {
     const { store, actions } = useContext(Context)
@@ -27,6 +27,7 @@ export const CardSearchBar = () => {
     const handleSelect = (cardname) => {
         actions.searchForCard(cardname)
         actions.getAllPrintings(htmlNameEncode(cardname))
+        setQuery('')
     }
 
     return (
@@ -39,15 +40,22 @@ export const CardSearchBar = () => {
                         onChange={event => setQuery(event.target.value)}
                         value={query}
                 />
-            </div>
-            <div className="search_dropdown">
-            {cards?.map((cardname, index) => 
-                <div key={index} onClick={() => handleSelect(cardname)}>
-                    <h6>{cardname}</h6>
+                <div className="search_dropdown d-flex flex-column">
+                    {cards?.map((cardname, index) => {
+                        const path = `/search/${htmlNameEncode(cardname)}`    
+                        return (
+                            <Link to={path} key={index} className="text-start p-1">
+                                <div className="d-flex justify-content-start w-100" onClick={() => handleSelect(cardname)}>
+                                    <h6 >{cardname}</h6>
+                                </div>
+                            </Link>
+                        )
+                    }
+                    )}
                 </div>
-            )}
             </div>
-            <h6>Try "Mishra," "Urza," "Swords To Plowshares," etc.</h6>
+            
+            <h6 className="my-3">Try "Mishra," "Urza," "Swords To Plowshares," etc.</h6>
         </div>
     )
 }

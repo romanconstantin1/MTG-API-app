@@ -21,12 +21,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			searchedCard: {name: null, image_uris: {normal: null}},
 			allCardPrintings: [],
 			savedCards: [],
-			savedDecks: []
+			savedDecks: [],
+			selectedCard: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
+			},
+
+			setSelectedCard: (cardData) => {
+				console.log(cardData)
+				setStore({selectedCard: cardData})
 			},
 
 			resetSearch: () => {
@@ -78,6 +84,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			searchForCard: async (cardname) => {
 				const store = getStore()
+				setStore({searchedCard: {name: "Loading...", image_uris: {normal: null}}})
 				try {
 					const resp = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${cardname}`, {
 						method: "GET"
@@ -125,6 +132,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch(error) {
 					console.log(`Error saving ${cardData.name} to the db`, error)
 				}
+			},
+
+			getSingleSavedCard: async (cardID) => {
+				const store = getStore()
+				console.log(cardID)
+				console.log(store.savedCards)
 			},
 
 			deleteCard: async (cardData) => {
@@ -227,19 +240,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore()
 				const actions = getActions()
 				const savedCard = await actions.saveCardToDB(store.searchedCard)
+
 				if (quantity == undefined) {
 					quantity = 1
 				}
+
 				let newDeckList = [...store.savedDecks]
 				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
-
-				// const savedCardCheck = findDeck.cards.find(
-				// 	cardExists => cardExists.image_small === cardData.image_uris.small)
-				// if (savedCardCheck) {
-				// 	// in the future, this could potentially just add 1 to the total # in collection
-				// 	console.log(`${savedCardCheck.cardname} is already in the db`)
-				// 	return savedCardCheck
-				// }
 				
 				if (findDeck) {
 					const findCardInDeck = await findDeck.cards.find(cardInDeck => cardInDeck.id == savedCard.id)
@@ -250,10 +257,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						await findDeck.cards.push(savedCard)
 					}
 				}
-				
-				// if (findDeck) {
-				// 	await findDeck.cards.push(savedCard)
-				// }
+
 				console.log(newDeckList)
 				await setStore({savedDecks: newDeckList})
 				
@@ -280,6 +284,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
 				let newDeckList = [...store.savedDecks]
+
 				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
 				const findCardInDeck = findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)
 

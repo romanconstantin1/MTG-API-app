@@ -7,7 +7,7 @@
 export const checkFormatLegality = (cardData, decksData, deckID, cardInDB) => {
     if (cardInDB == false) {
         var isLegalIn = Object.keys(cardData.legalities).filter(isLegal => {
-            return cardData.legalities[isLegal] === "legal"
+            return cardData.legalities[isLegal] === "legal" || "restricted"
         })
     } else {
         var isLegalIn = cardData.legalities

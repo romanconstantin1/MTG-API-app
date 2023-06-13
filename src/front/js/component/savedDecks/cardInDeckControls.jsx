@@ -10,7 +10,7 @@ export const CardInDeckControls = (props) => {
     const deckData = props.props[1]
 
     const handleAddCard = () => {
-        const maxCheck = checkMaxQty(deckData.format, cardData, cardData.quantity + 1)
+        const maxCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
         if (maxCheck === true) {
             actions.changeCardQuantity(deckData.id, cardData, 1)
         } else {

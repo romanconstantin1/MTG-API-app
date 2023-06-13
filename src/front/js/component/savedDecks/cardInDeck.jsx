@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { Context } from "../../store/appContext";
 
@@ -9,10 +10,20 @@ export const CardInDeck = (props) => {
     const cardData = props.props[0]
     const deckData = props.props[1]
 
+    const cardString = encodeURIComponent(JSON.stringify(
+        {
+            "cardname": cardData.cardname,
+            "id": cardData.id
+        }
+        ))
+
+    console.log(cardData)
     return (
         <div className="text-center px-2">
             <div className="card_display mx-auto">
-                <img src={cardData.image_small} />
+                <Link to={`/cards/single/${cardString}`}>
+                    <img src={cardData.image_small} />
+                </Link>
             </div>
             <div>
                 <h4>{cardData.quantity}x {cardData.cardname}</h4>

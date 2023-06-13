@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-import { SavedDecksDisplay } from "../component/savedDecks/savedDecks.jsx";
+import { SavedDecksDisplay } from "../component/savedDecks/savedDecksDisplay.jsx";
 import { DeckCreator } from "../component/deckCreator.jsx";
 
 export const SavedDecks = () => {

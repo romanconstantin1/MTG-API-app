@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 
 import { Context } from "../store/appContext";
 import { SavedCardInGrid } from "./savedCards/savedCardGridView.jsx";
+import { SavedCardControls } from "./savedCards/savedCardControls.jsx";
 
 export const SavedCardsGrid = () => {
     const { store, actions } = useContext(Context);
@@ -11,8 +12,9 @@ export const SavedCardsGrid = () => {
             return (
                 <div className="d-flex flex-wrap">
                     {store.savedCards.map((entry) => (
-                        <div className="d-flex align-items-center" key={entry.id}>
-                            <SavedCardInGrid key={entry.id} cardData={entry} />
+                        <div className="d-flex flex-column align-items-center" key={entry.id}>
+                            <SavedCardInGrid key={`img ${entry.id}`} cardData={entry} />
+                            <SavedCardControls key={`ctrl ${entry.id}`} cardData={entry} />
                         </div>
                     ))}
                 </div>

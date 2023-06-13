@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { CardSearchBar } from "./cardSearchBar.jsx";
+import { CardSearchBar } from "./cardSearch/cardSearchBar.jsx";
 
 import { Context } from "../store/appContext.js";
 
@@ -16,7 +16,6 @@ export const Navbar = () => {
 				{/* <Link to="/">
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link> */}
-				<CardSearchBar />
 				<Link to="/" onClick={() => handleClick()}>
 					<span className="navbar-brand mb-0 h1">search</span>
 				</Link>

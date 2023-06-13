@@ -36,7 +36,6 @@ def handle_add():
         "image_small": card_entry["image_uri_small"],
         "legalities": card_entry["legalities"],
         "is_restricted": card_entry["is_restricted"],
-        "type": card_entry["card_type"],
         "mana_cost": card_entry["mana_cost"],
         "oracle_text": card_entry["oracle_text"],
         "flavor_text": card_entry["flavor_text"]

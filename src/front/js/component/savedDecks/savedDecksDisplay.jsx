@@ -10,6 +10,10 @@ export const SavedDecksDisplay = () => {
     const handleDeleteDeck = (deckData) => {
         actions.deleteDeck(deckData)
     }
+
+    const handleViewDeck = (deckId) => {
+        
+    }
     
     const deckDisplayBuilder = () => {
         if (store.savedDecks.length > 0) {
@@ -19,13 +23,15 @@ export const SavedDecksDisplay = () => {
                         <div key={index}>
                             <h1>Deck: {entry.deckname}</h1>
                             <h1>Format: {entry.format}</h1>
-                            <h1>Cards: </h1>
                             <div className="d-flex p-2">{entry.cards.map(cardindeck => (
                                 <CardInDeck props={[cardindeck, entry]} />
                             ))}</div>
-                            <button className="mx-1" onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
+                            <Link to="/">
+                                <button className="mx-1" onClick={() => alert(`see all cards in ${entry.deckname}`)}>View this deck</button>
+                            </Link>
+                            
                             <button onClick={() => handleDeleteDeck(entry)}>Delete this deck</button>
-                            <button className="mx-1" onClick={() => console.log(entry)}>Test</button>
+                            {/* <button className="mx-1" onClick={() => console.log(entry)}>Test</button> */}
                         </div>
                     ))}
                 </div>

@@ -19,7 +19,7 @@ const anyNumberOf = [
     if (anyNumberOf.includes(cardData.cardname) || cardData.card_type.includes("Basic Land")) {
       return true;
     }
-  
+    console.log(deckData)
     const maxQty = getMaxQuantity(deckData.format, cardData);
     if (cardQty > maxQty) {
       return (
@@ -34,7 +34,7 @@ const anyNumberOf = [
   const getMaxQuantity = (deckFormat, cardData) => {
     if (deckFormat === "commander") {
       return maxQuantities.commander;
-    } else if (deckFormat === "vintage" && cardData.is_restricted) {
+    } else if (deckFormat === "vintage" && cardData.is_restricted === "true") {
       return maxQuantities.vintage.restricted;
     } else if (deckFormat === "vintage") {
       return maxQuantities.vintage.unrestricted;

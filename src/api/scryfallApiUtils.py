@@ -4,6 +4,7 @@ class ScryfallAPIUtils(object):
         is_restricted = False
         flavor_text = ""
         oracle_text = ""
+        print(cardData["legalities"])
         for entry in cardData["legalities"]:
             if cardData["legalities"][entry] == "legal":
                 legalities.append(entry)
@@ -14,7 +15,7 @@ class ScryfallAPIUtils(object):
                 flavor_text = cardData["flavor_text"]
             if "oracle_text" in cardData:
                 oracle_text = cardData["oracle_text"]
-
+        print(is_restricted)
         return {
             "name": cardData["name"],
             "card_type": cardData["type_line"],

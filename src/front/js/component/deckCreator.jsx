@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
 import { Context } from "../store/appContext.js";
-import { listOfFormats } from "../utils/listOfFormats.js";
+import { listOfFormats } from "../utils/dataLists.js";
 
 export const DeckCreator = () => {
 	const { actions } = useContext(Context);
