@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { detailedLog } from "../utils/detailedLog";
 
-export const Single = () => {
+export const SingleCard = () => {
     const { store } = useContext(Context)
     
     const { carddata } = useParams();
@@ -19,9 +19,14 @@ export const Single = () => {
     }, [store.savedCards])
     
     const getCard = () => {
-        const cardToFind = store.savedCards.find(foundCard => foundCard.id === parsedData.id);
-        setCardData(cardToFind)
+        const cardToFind = store.savedCards.find(foundCard => 
+            foundCard.id === parsedData.id && foundCard.cardname === parsedData.cardname);
         
+        if (cardToFind == undefined) {
+            setCardData({"cardname": "No card found!", "image_normal": null})
+        } else {
+            setCardData(cardToFind)
+        }    
     }
 
     return (

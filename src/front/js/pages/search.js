@@ -28,7 +28,7 @@ export const Search = () => {
 					<h3>Rules text:</h3>
 					<h5>{store.searchedCard.oracle_text}</h5>
 					<h3>Flavor text:</h3>
-					<h5>{store.searchedCard.flavor_text}</h5>
+					<h5><i>{`"${store.searchedCard.flavor_text}"`}</i></h5>
 				</div>
 				<img loading="lazy" src={store.searchedCard.image_uris.normal} />
 			</>

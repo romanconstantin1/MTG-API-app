@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-import { SavedCardsGrid } from "../component/savedCardsGrid.jsx";
+import { SavedCardsGrid } from "../component/savedCards/savedCardsGrid.jsx";
 
 export const SavedCards = () => {
     const { store, actions } = useContext(Context);

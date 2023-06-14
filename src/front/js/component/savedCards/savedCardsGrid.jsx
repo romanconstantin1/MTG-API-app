@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 
-import { Context } from "../store/appContext";
-import { SavedCardInGrid } from "./savedCards/savedCardGridView.jsx";
-import { SavedCardControls } from "./savedCards/savedCardControls.jsx";
+import { Context } from "../../store/appContext";
+import { SavedCardInGrid } from "./savedCardSingle.jsx";
+import { SavedCardControls } from "./savedCardSingleControls.jsx";
 
 export const SavedCardsGrid = () => {
     const { store, actions } = useContext(Context);
@@ -19,10 +19,10 @@ export const SavedCardsGrid = () => {
                     ))}
                 </div>
             );
-        } else if (store.savedCards.length <= 0) {
-            return <h1>No saved cards</h1>;
+        // } else if (store.savedCards.length <= 0) {
+        //     return <h1>Loading saved cards...</h1>;
         } else {
-            return <h1>Loading...</h1>;
+            return <h1>Loading saved cards...</h1>;
         }
     };
 

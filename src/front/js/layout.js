@@ -8,7 +8,8 @@ import { Demo } from "./pages/demo";
 import { Search } from "./pages/search";
 import { SavedCards } from "./pages/cards";
 import { SavedDecks } from "./pages/decks";
-import { Single } from "./pages/singlecard";
+import { SingleCard } from "./pages/singlecard";
+import { SingleDeck } from "./pages/singledeck";
 import { CardInDeck } from "./component/savedDecks/cardInDeck.jsx";
 import injectContext from "./store/appContext";
 import { NotFound } from "./component/notFound";
@@ -33,9 +34,9 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SavedCards />} path="/cards" />
-                        <Route element={<Single />} path="/cards/single/:carddata" />
+                        <Route element={<SingleCard />} path="/cards/single/:carddata" />
                         <Route element={<SavedDecks />} path="/decks" />
-                        <Route element={<CardInDeck />} path="/decks/:deckname" />
+                        <Route element={<SingleDeck />} path="/decks/single/:deckdata" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Search />} path="/search/:cardname" />
                         <Route element={<NotFound />} path="*" />
