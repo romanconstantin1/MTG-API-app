@@ -1,5 +1,6 @@
-import { detailedLog } from "../utils/detailedLog";
+
 import { checkMaxQty } from "../utils/checkMaxQty";
+import { detailedLog } from "../utils/detailedLog";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -103,20 +104,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const actions = getActions()
 
 				//check if a card being added is already in the DB
-				console.log(cardData)
 				const savedCardCheck = store.savedCards.find(
-					cardExists => cardExists.image_small === cardData.image_uris.small)
+					cardExists => cardExists.image_small === cardData.image_uris.small || 
+								cardExists.image_small === cardData.image_small)
 				if (savedCardCheck) {
-					// in the future, this could potentially just add 1 to the total # in collection
-					console.log(`${savedCardCheck.cardname} is already in the db`)
+					console.log("card already in DB:")
+					detailedLog(savedCardCheck)
+					//console.log(`${savedCardCheck.cardname} is already in the db`)
 					return savedCardCheck
 				}
-				//a function here to transform cardData to same format as the backend
-				//it might make more sense to do the transformation here & have this be the only place where the card format changes
-				// but this doesn't work because i need the backend id
-				// this is the same problem as the spotify project. 
-				// if the user can deal with the very minor inconvenience of waiting a second
-				// this will be fine
+
+				console.log("card not in db:")
+				detailedLog(cardData)
+
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {
 						method: "POST",
@@ -128,6 +128,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					const data = await resp.json()
 					await actions.getSavedCards()
+					console.log("updated saved cards list")
+					detailedLog(store.savedCards)
 					return data;
 				} catch(error) {
 					console.log(`Error saving ${cardData.name} to the db`, error)
@@ -236,51 +238,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// the next few functions are basically the same; would be good to find a way to reduce it to one
 			// or add more modularity to how the functions... function
-			addNewCardToDeck: async (deckId, quantity) => {
-				const store = getStore()
-				const actions = getActions()
-				const savedCard = await actions.saveCardToDB(store.searchedCard)
-
-				if (quantity == undefined) {
-					quantity = 1
-				}
-
-				let newDeckList = [...store.savedDecks]
-				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
-				
-				if (findDeck) {
-					const findCardInDeck = await findDeck.cards.find(cardInDeck => cardInDeck.id == savedCard.id)
-					if (findCardInDeck) {
-						findCardInDeck.quantity += quantity
-					} else {
-						savedCard.quantity = quantity
-						await findDeck.cards.push(savedCard)
-					}
-				}
-
-				console.log(newDeckList)
-				await setStore({savedDecks: newDeckList})
-				
-				try {
-					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
-						method: "PUT",
-						headers: {
-							"Access-Control-Allow-Origin": "*",
-							"Content-Type": "application/json"
-						},
-						body: JSON.stringify({
-							'deck_id': deckId,
-							'card_id': savedCard.id,
-							'quantity': quantity
-						})
-					})
-					const data = await resp.json(); 
-					return data;
-				} catch (error) {
-					console.log(`Error adding ${savedCard.cardname} to a deck`, error)
-				}
-			},
-
 			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
 				let newDeckList = [...store.savedDecks]
@@ -321,10 +278,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					
 					const data = await resp.json();
-					console.log(data)
 					return data;
 				} catch (error) {
 					console.log(`Error adding ${cardData.cardname} to a deck`, error)
+				}
+			},
+
+			addNewCardToDeck: async (deckId, quantity) => {
+				const store = getStore()
+				const actions = getActions()
+				const savedCard = await actions.saveCardToDB(store.searchedCard)
+				
+				let newDeckList = [...store.savedDecks]
+				
+				if (quantity == undefined) {
+					quantity = 1
+				}
+
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+				const findCardInDeck = await findDeck.cards.find(cardToFind => cardToFind.cardname === savedCard.cardname)
+
+				if (findCardInDeck) {
+					console.log("found card in deck:")
+					detailedLog(findCardInDeck)
+					return actions.addSavedCardToDeck(deckId, findCardInDeck, quantity)
+				} else {
+					savedCard.quantity = quantity
+					console.log("new card in deck added")
+					detailedLog(savedCard)
+					await findDeck.cards.push(savedCard)
+				}
+
+				await setStore({savedDecks: newDeckList})
+				
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': savedCard.id,
+							'quantity': quantity
+						})
+					})
+					const data = await resp.json();
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${savedCard.cardname} to a deck`, error)
 				}
 			},
 

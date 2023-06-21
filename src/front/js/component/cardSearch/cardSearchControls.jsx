@@ -33,9 +33,9 @@ export const CardSearchControls = () => {
 		  	return;
 		}
 		const checkIfLegal = checkFormatLegality(store.searchedCard, store.savedDecks, deckID, false);
-		if (checkIfLegal === true) {
-		  	const addedCard = await actions.addNewCardToDeck(deckID, cardQty);
-			console.log(addedCard)
+        
+        if (checkIfLegal === true) {
+		  	await actions.addNewCardToDeck(deckID, cardQty)
 		} else {
 		  	alert(`${store.searchedCard.name} is not legal in the ${checkIfLegal} format`);
 		}
