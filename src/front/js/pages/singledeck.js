@@ -34,6 +34,7 @@ export const SingleDeck = () => {
         <div>
             <h1>Name</h1>
             <h1>{deckData.deckname}</h1>
+            <h1>{deckData.card_total} cards</h1>
             <div className="d-flex p-2">
                 {deckData.cards.map(cardindeck => (
                     <CardInDeck props={[cardindeck, deckData]} />

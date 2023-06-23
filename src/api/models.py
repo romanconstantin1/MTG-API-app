@@ -33,6 +33,7 @@ class Decks(db.Model):
     #user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(120), unique=False, nullable=False)
     format = db.Column(db.String(120), unique=False, nullable=False)
+    card_total = db.Column(db.Integer)
     cards = db.relationship('Cards', secondary=cards_in_decks, backref=db.backref('decks', lazy='dynamic'))
 
     def __repr__(self):
@@ -49,7 +50,8 @@ class Decks(db.Model):
             "id": self.id,
             "deckname": self.name,
             "format": self.format,
-            "cards": serialized_cards
+            "cards": serialized_cards,
+            "card_total": self.card_total
         }
 
     def get_card_quantity(self, card):
@@ -64,6 +66,7 @@ class Decks(db.Model):
         new_deck = cls()
         new_deck.name = name
         new_deck.format = format
+        new_deck.card_total = 0
 
         db.session.add(new_deck)
         db.session.commit()
@@ -92,7 +95,7 @@ class Decks(db.Model):
         else:
             new_card_in_deck = cards_in_decks.insert().values(card_id=card.id, deck_id=self.id, quantity=quantity)
             db.session.execute(new_card_in_deck)
-
+        self.card_total += quantity
         db.session.commit()
         return None
    
@@ -104,15 +107,17 @@ class Decks(db.Model):
                 and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
         ).values(quantity=new_quantity))
 
+        self.card_total += quantity
         db.session.commit()
         return None
     
-    def delete_card(self, card):
+    def delete_card(self, card, quantity):
         existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
         if existing_card:
             db.session.execute(cards_in_decks.delete().where(
                 and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
             ))
+            self.card_total -= quantity
             db.session.commit()
             print()
             return True

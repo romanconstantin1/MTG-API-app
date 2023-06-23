@@ -32,11 +32,16 @@ export const CardInDeckControls = (props) => {
         actions.deleteCardFromDeck(deckData.id, cardData)
     }
 
+    const handleView = () => {
+        console.log(cardData)
+    }
+
     return (
         <>
             <button className="mx-1" onClick={() => handleAddCard()}>+</button>
             <button onClick={() => handleSubtractCard()}>-</button>
             <button className="mx-1" onClick={() => handleDeleteCard()}>Delete this card</button>
+            <button className="mx-1" onClick={() => handleView()}>Test</button>
         </>
     )
 }

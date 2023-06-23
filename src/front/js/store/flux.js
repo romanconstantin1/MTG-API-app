@@ -258,6 +258,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} else {
 					cardData.quantity = quantity
+					findDeck.card_total += quantity
 					findDeck.cards.push(cardData)
 				}
 
@@ -304,8 +305,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return actions.addSavedCardToDeck(deckId, findCardInDeck, quantity)
 				} else {
 					savedCard.quantity = quantity
+					findDeck.card_total += quantity
 					console.log("new card in deck added")
 					detailedLog(savedCard)
+					console.log("deck details")
+					detailedLog(findDeck)
 					await findDeck.cards.push(savedCard)
 				}
 
@@ -339,6 +343,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
 					const cardIndex = cardListSearch.cards.indexOf(cardData)
+					cardListSearch.card_total -= cardData.quantity
 					cardListSearch.cards.splice(cardIndex, 1)
 				}
 				setStore({savedDecks: newDeckList})
@@ -352,7 +357,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({
 							'deck_id': deckId,
-							'card_id': cardData.id
+							'card_id': cardData.id,
+							'quantity': cardData.quantity
 						})
 					})
 					const data = await resp.json();
@@ -372,6 +378,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
 					const cardIndex = cardListSearch.cards.indexOf(cardData)
+					cardListSearch.card_total += quantity
 					cardListSearch.cards[cardIndex].quantity += quantity
 				}
 				setStore({savedDecks: newDeckList})

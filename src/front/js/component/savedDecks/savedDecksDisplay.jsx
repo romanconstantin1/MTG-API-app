@@ -34,7 +34,7 @@ export const SavedDecksDisplay = () => {
                             </Link>
                             
                             <button onClick={() => handleDeleteDeck(entry)}>Delete this deck</button>
-                            {/* <button className="mx-1" onClick={() => console.log(entry)}>Test</button> */}
+                            <button className="mx-1" onClick={() => console.log(entry)}>Test</button>
                         </div>
                     ))}
                 </div>
