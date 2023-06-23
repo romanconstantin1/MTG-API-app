@@ -6,13 +6,15 @@ const anyNumberOf = [
     "Shadowborn Apostle"
   ];
   
-  const maxQuantities = {
+const maxQuantities = {
     commander: 1,
     vintage: {
       restricted: 1,
       unrestricted: 4
     },
-    default: 4
+    default: 4,
+    nazgul: 9,
+    sevendwarves: 7
   };
   
   export const checkMaxQty = (deckData, cardData, cardQty) => {
@@ -32,6 +34,13 @@ const anyNumberOf = [
   
   const getMaxQuantity = (deckFormat, cardData) => {
     console.log(cardData)
+
+    if (cardData.cardname === "Nazgûl") {
+      return maxQuantities.nazgul 
+    } else if (cardData.cardname === "Seven Dwarves") {
+      return maxQuantities.sevendwarves
+    }
+
     if (deckFormat === "commander") {
       return maxQuantities.commander;
     } else if (deckFormat === "vintage" && 
