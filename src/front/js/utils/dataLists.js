@@ -27,3 +27,4 @@ export const restrictedList = [
     "Trinisphere", "Vampiric Tutor",  "Wheel of Fortune",
     "Windfall", "Yawgmoth's Will"
 ]
+

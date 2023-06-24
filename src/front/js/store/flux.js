@@ -77,6 +77,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "GET"
 					})
 					const data = await resp.json()
+					console.log(data)
 					setStore({allCardPrintings: data})
 				} catch(error) {
 					alert(`Something went wrong while searching for all printings`, error)
@@ -252,6 +253,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (findCardInDeck) {
 					const maxCheck = checkMaxQty(findDeck, findCardInDeck, findCardInDeck.quantity + 1)
 					if (maxCheck == true) {
+						findDeck.card_total += quantity
 						findCardInDeck.quantity += quantity
 					} else {
 						return alert(maxCheck)
@@ -300,16 +302,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const findCardInDeck = await findDeck.cards.find(cardToFind => cardToFind.cardname === savedCard.cardname)
 
 				if (findCardInDeck) {
-					console.log("found card in deck:")
-					detailedLog(findCardInDeck)
+					// console.log("found card in deck:")
+					// detailedLog(findCardInDeck)
 					return actions.addSavedCardToDeck(deckId, findCardInDeck, quantity)
 				} else {
 					savedCard.quantity = quantity
 					findDeck.card_total += quantity
-					console.log("new card in deck added")
-					detailedLog(savedCard)
-					console.log("deck details")
-					detailedLog(findDeck)
+					// console.log("new card in deck added")
+					// detailedLog(savedCard)
+					// console.log("deck details")
+					// detailedLog(findDeck)
 					await findDeck.cards.push(savedCard)
 				}
 
@@ -374,7 +376,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const actions = getActions()
 
 				let newDeckList = [...store.savedDecks]
-				console.log(newDeckList)
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
 					const cardIndex = cardListSearch.cards.indexOf(cardData)

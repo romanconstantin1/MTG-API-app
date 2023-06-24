@@ -3,5 +3,6 @@ export const htmlNameEncode = (name) => {
         .replaceAll(" ", "+")
         .replaceAll(",", "%2C")
         .replaceAll("'", "%27")
+        .replaceAll("/", "%2F")
     return newName
 }

@@ -17,7 +17,6 @@ export const CardInDeck = (props) => {
         }
         ))
 
-    console.log(cardData)
     return (
         <div className="text-center px-2">
             <div className="card_display mx-auto">

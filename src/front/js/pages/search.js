@@ -2,46 +2,61 @@ import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
-import rigoImageUrl from "../../img/rigo-baby.jpg";
 
 import { checkFormatLegality } from "../utils/checkLegality";
 
 import { CardSearchControls } from "../component/cardSearch/cardSearchControls.jsx";
+import { IsDoubleFaced } from "../component/cardSearch/isDoubleFaced.jsx";
+import { IsSingleFaced } from "../component/cardSearch/isSinglefaced.jsx";
 
 export const Search = () => {
 	const { store } = useContext(Context)
-	// const handleClick = () => {
-	// 	actions.getRandomCards()
+
+	// const isSingleFaced = () => {
+	// 	const flavorText = () => {
+	// 		if (store.searchedCard.flavor_text) {
+	// 			return (
+	// 				<>
+	// 				<h3>Flavor text:</h3>
+	// 				<h5><i>{`"${store.searchedCard.flavor_text}"`}</i></h5>
+	// 				</>
+	// 			)
+	// 		}
+	// 	}
+
+
+	// 	return (
+	// 		<>
+	// 			<div>
+	// 				<h1>{store.searchedCard.name}</h1>
+	// 				<CardSearchControls />
+	// 			</div>
+	// 			<div className="justify-text">
+	// 				<h3>Mana cost: {store.searchedCard.mana_cost}</h3>
+	// 				<h3>CMC: {store.searchedCard.cmc}</h3>
+	// 				<h3>Type: {store.searchedCard.type_line}</h3>
+	// 				<h3>Rules text:</h3>
+	// 				<h5>{store.searchedCard.oracle_text}</h5>
+	// 				{flavorText()}
+	// 			</div>
+	// 			<img loading="lazy" src={store.searchedCard.image_uris.normal} />
+	// 		</>
+	// 	)
 	// }
 
+	
+	
 	const searchDisplayBuilder = () => {
-		return (
-			<>
-				<div>
-					<h1>{store.searchedCard.name}</h1>
-					<CardSearchControls />
-				</div>
-				<div className="justify-text">
-					<h3>Mana cost: {store.searchedCard.mana_cost}</h3>
-					<h3>CMC: {store.searchedCard.cmc}</h3>
-					<h3>Type: {store.searchedCard.type_line}</h3>
-					<h3>Rules text:</h3>
-					<h5>{store.searchedCard.oracle_text}</h5>
-					<h3>Flavor text:</h3>
-					<h5><i>{`"${store.searchedCard.flavor_text}"`}</i></h5>
-				</div>
-				<img loading="lazy" src={store.searchedCard.image_uris.normal} />
-			</>
-		)
+		if (store.searchedCard.card_faces == undefined) {
+			return <IsSingleFaced />
+		} else {
+			return <IsDoubleFaced />
+		}
 	}
 
 	return (
 		<div className="text-center mt-5">
 			{/* <h1>Hello Rigo!!</h1> */}
-			{/* <DeckCreator />
-			<button onClick={() => handleClick()}>Find a random commander</button>
-			<h3>Your random commander is</h3>
-			<h1>{store.randomCard}</h1> */}
 			{searchDisplayBuilder()}
 			
 			{/* <p>

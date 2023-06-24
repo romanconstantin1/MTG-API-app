@@ -3,6 +3,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/appContext";
 
 import { checkMaxQty } from "../../utils/checkMaxQty";
+import { checkDeckSize } from "../../utils/checkDeckSize";
+import { bool, string } from "prop-types";
 
 export const CardInDeckControls = (props) => {
     const { store, actions } = useContext(Context)
@@ -10,11 +12,15 @@ export const CardInDeckControls = (props) => {
     const deckData = props.props[1]
 
     const handleAddCard = () => {
-        const maxCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
-        if (maxCheck === true) {
-            actions.changeCardQuantity(deckData.id, cardData, 1)
+        const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
+        const deckSizeCheck = checkDeckSize(deckData, deckData.card_total + 1)
+
+        if (maxCardCheck != true) {
+            alert(maxCardCheck)
+        } else if (typeof deckSizeCheck === "string") {
+            alert(deckSizeCheck)
         } else {
-            alert(maxCheck)
+            actions.changeCardQuantity(deckData.id, cardData, 1)
         }
         
     }

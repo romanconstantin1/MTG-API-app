@@ -41,7 +41,15 @@ const maxQuantities = {
       return maxQuantities.sevendwarves
     }
 
-    if (deckFormat === "commander") {
+    if (
+      deckFormat === "commander" ||
+      deckFormat === "gladiator" || 
+      deckFormat === "brawl" ||
+      deckFormat === "historicbrawl" ||
+      deckFormat === "duel" ||
+      deckFormat === "paupercommander" ||
+      deckFormat === "predh" 
+    ) {
       return maxQuantities.commander;
     } else if (deckFormat === "vintage" && 
               cardData.is_restricted === true ||

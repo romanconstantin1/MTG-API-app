@@ -4,13 +4,14 @@ import { Context } from "../../store/appContext";
 
 import { checkFormatLegality } from "../../utils/checkLegality";
 import { checkMaxQty } from "../../utils/checkMaxQty";
+import { checkDeckSize } from "../../utils/checkDeckSize";
 import { detailedLog } from "../../utils/detailedLog";
 
 export const SavedCardControls = (cardData) => {
     const { store, actions } = useContext(Context);
     // const [ deckID, setDeckID ] = useState('');
     // const [ deckFormat, setDeckFormat ] = useState('');
-    const [ deckData, setDeckData ] = useState('');
+    const [ deckData, setDeckData ] = useState(null);
     const cardEntry = cardData.cardData 
 
     const handleDelete = (cardData) => actions.deleteCard(cardData);
@@ -25,18 +26,22 @@ export const SavedCardControls = (cardData) => {
     }
 
     const handleAddToDeck = (cardData) => {
-        if (deckData.id === '') {
+        if (deckData === null) {
             alert('Select a deck first');
             return;
         }
         detailedLog(cardData)
-        //returns true if card is legal in the deck's format, deck format name if not
         const checkIfLegal = checkFormatLegality(cardData, store.savedDecks, deckData.id, true);
-        //returns true if adding a card does not exceed the max quantity in the deck
-        if (checkIfLegal === true) {
-            actions.addSavedCardToDeck(deckData.id, cardData);
-        } else {
+        const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
+        const deckSizeCheck = checkDeckSize(deckData, deckData.card_total + 1)        
+        if (checkIfLegal !== true) {
             alert(`"${deckData.deckname}" is a ${deckData.format} deck. ${cardData.cardname} is not legal in the ${checkIfLegal} format`);
+        } else if (maxCardCheck != true) {
+            alert(maxCardCheck)
+        } else if (typeof deckSizeCheck === "string") {
+            alert(deckSizeCheck)
+        } else {
+            actions.addSavedCardToDeck(deckData.id, cardData);
         }
     };
 

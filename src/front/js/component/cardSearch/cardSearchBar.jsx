@@ -26,7 +26,7 @@ export const CardSearchBar = () => {
 
     const handleSelect = (cardname) => {
         actions.searchForCard(cardname)
-        actions.getAllPrintings(htmlNameEncode(cardname))
+        //actions.getAllPrintings(htmlNameEncode(cardname))
         setQuery('')
     }
 
