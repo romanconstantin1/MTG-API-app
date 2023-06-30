@@ -35,7 +35,7 @@ export const SavedCardControls = (cardData) => {
         const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
         const deckSizeCheck = checkDeckSize(deckData, deckData.card_total + 1)        
         if (checkIfLegal !== true) {
-            alert(`"${deckData.deckname}" is a ${deckData.format} deck. ${cardData.cardname} is not legal in the ${checkIfLegal} format`);
+            alert(`"${deckData.deckname}" is a deck in the ${deckData.format} format. ${cardData.cardname} is not legal in the ${checkIfLegal} format`);
         } else if (maxCardCheck != true) {
             alert(maxCardCheck)
         } else if (typeof deckSizeCheck === "string") {

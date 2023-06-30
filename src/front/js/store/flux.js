@@ -92,7 +92,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "GET"
 					})
 					const data = await resp.json()
-					console.log(data)
 					setStore({searchedCard: data})
 					return data
 				} catch(error) {
@@ -106,17 +105,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//check if a card being added is already in the DB
 				const savedCardCheck = store.savedCards.find(
-					cardExists => cardExists.image_small === cardData.image_uris.small || 
-								cardExists.image_small === cardData.image_small)
+					cardExists => cardExists.scryfall_id === cardData.id || 
+								cardExists.scryfall_id === cardData.scryfall_id)
 				if (savedCardCheck) {
-					console.log("card already in DB:")
-					detailedLog(savedCardCheck)
-					//console.log(`${savedCardCheck.cardname} is already in the db`)
 					return savedCardCheck
 				}
-
-				console.log("card not in db:")
-				detailedLog(cardData)
 
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {

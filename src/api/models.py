@@ -140,32 +140,54 @@ class Cards(db.Model):
     flavor_text = db.Column(db.String(750), unique=False, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
+    scryfall_id = db.Column(db.String(120), unique=True, nullable=True)
+    card_sides = db.relationship('CardSides', cascade='all, delete')
 
     def __repr__(self):
         return f'<Card: {self.name}>'
     
     def serialize(self):
-        return {
+        card_data = {
             "id": self.id,
             "cardname": self.name,
             "card_type": self.card_type,
             "mana_cost": self.mana_cost,
+            "cmc": self.cmc,
             "oracle_text": self.oracle_text,
             "legalities": self.legalities,
             "is_restricted": self.is_restricted,
             "flavor_text": self.flavor_text,
             "artist": self.artist,
             "image_small": self.image_uri_small,
-            "image_normal": self.image_uri_normal
-        } 
+            "image_normal": self.image_uri_normal,
+            "scryfall_id": self.scryfall_id
+        }
+
+        if self.card_sides:
+            back_side_data = []
+            for side in self.card_sides:
+                back_side_data.append({
+                    "id": side.id,
+                    "cardname": side.side_name,
+                    "card_type": side.side_card_type,
+                    "mana_cost": side.side_mana_cost,
+                    "oracle_text": side.side_oracle_text,
+                    "flavor_text": side.side_flavor_text,
+                    "artist": side.side_artist,
+                    "image_small": side.side_image_uri_small,
+                    "image_normal": side.side_image_uri_normal
+                })
+            card_data["back_side"] = back_side_data
+
+        return card_data 
     
     @classmethod
-    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, artist, image_uri_small, image_uri_normal):
+    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, 
+               artist, image_uri_small, image_uri_normal, scryfall_id):
         new_card = cls()
         new_card.name = name
         new_card.card_type = card_type
         new_card.mana_cost = mana_cost
-        new_card.cmc = cmc
         new_card.oracle_text = oracle_text
         new_card.legalities = legalities
         new_card.is_restricted = is_restricted
@@ -173,6 +195,8 @@ class Cards(db.Model):
         new_card.artist = artist
         new_card.image_uri_small = image_uri_small
         new_card.image_uri_normal = image_uri_normal
+        new_card.scryfall_id = scryfall_id
+        new_card.cmc = cmc
 
         db.session.add(new_card)
         db.session.commit()
@@ -183,9 +207,43 @@ class Cards(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-
         return None
     
     @classmethod
     def read_all(cls):
         return cls.query.all()
+
+
+class CardSides(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    parent_card_id = db.Column(db.Integer, db.ForeignKey('cards.id'), nullable=False)
+    side_name = db.Column(db.String(120), nullable=False)
+    side_card_type = db.Column(db.String(120), nullable=False)
+    side_mana_cost = db.Column(db.String(120))
+    side_artist = db.Column(db.String(120), unique=False, nullable=False)
+    side_image_uri_small = db.Column(db.String(250), nullable=False)
+    side_image_uri_normal = db.Column(db.String(250), nullable=False)
+    side_oracle_text = db.Column(db.String(750), nullable=True)
+    side_flavor_text = db.Column(db.String(750), nullable=True)
+
+    def __repr__(self):
+        return f'<CardSide: {self.side_name}>'
+    
+    @classmethod
+    def create(cls, card_id, side_name, side_card_type, side_mana_cost, side_oracle_text, side_flavor_text,
+               side_artist, side_image_uri_small, side_image_uri_normal):
+        new_side = cls()
+        new_side.parent_card_id = card_id
+        new_side.side_name = side_name
+        new_side.side_card_type = side_card_type
+        new_side.side_mana_cost = side_mana_cost
+        new_side.side_oracle_text = side_oracle_text
+        new_side.side_flavor_text = side_flavor_text
+        new_side.side_artist = side_artist
+        new_side.side_image_uri_small = side_image_uri_small
+        new_side.side_image_uri_normal = side_image_uri_normal
+
+        db.session.add(new_side)
+        db.session.commit()
+
+        return new_side

@@ -1,10 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../../store/appContext";
 
 import { CardSearchControls } from "./cardSearchControls.jsx";
+import { detailedLog } from "../../utils/detailedLog";
 
 export const IsDoubleFaced = () => {
     const { store } = useContext(Context)
+    
+    useEffect(()=> {
+        detailedLog(store.searchedCard)
+    },[store.searchedCard])
+    
+
     const frontFlavorText = () => {
         if (store.searchedCard.card_faces[0].flavor_text) {
             return (

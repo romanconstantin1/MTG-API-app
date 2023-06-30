@@ -11,46 +11,13 @@ import { IsSingleFaced } from "../component/cardSearch/isSinglefaced.jsx";
 
 export const Search = () => {
 	const { store } = useContext(Context)
-
-	// const isSingleFaced = () => {
-	// 	const flavorText = () => {
-	// 		if (store.searchedCard.flavor_text) {
-	// 			return (
-	// 				<>
-	// 				<h3>Flavor text:</h3>
-	// 				<h5><i>{`"${store.searchedCard.flavor_text}"`}</i></h5>
-	// 				</>
-	// 			)
-	// 		}
-	// 	}
-
-
-	// 	return (
-	// 		<>
-	// 			<div>
-	// 				<h1>{store.searchedCard.name}</h1>
-	// 				<CardSearchControls />
-	// 			</div>
-	// 			<div className="justify-text">
-	// 				<h3>Mana cost: {store.searchedCard.mana_cost}</h3>
-	// 				<h3>CMC: {store.searchedCard.cmc}</h3>
-	// 				<h3>Type: {store.searchedCard.type_line}</h3>
-	// 				<h3>Rules text:</h3>
-	// 				<h5>{store.searchedCard.oracle_text}</h5>
-	// 				{flavorText()}
-	// 			</div>
-	// 			<img loading="lazy" src={store.searchedCard.image_uris.normal} />
-	// 		</>
-	// 	)
-	// }
-
-	
-	
+		
 	const searchDisplayBuilder = () => {
-		if (store.searchedCard.card_faces == undefined) {
-			return <IsSingleFaced />
-		} else {
+		if (store.searchedCard.layout === "transform" ||
+			store.searchedCard.layout === "modal_dfc") {
 			return <IsDoubleFaced />
+		} else {
+			return <IsSingleFaced />
 		}
 	}
 

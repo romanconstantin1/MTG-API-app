@@ -28,10 +28,9 @@ export const SingleCard = () => {
             setCardData(cardToFind)
         }    
     }
-
+    detailedLog(cardData)
     return (
         <div>
-            <h1>Name</h1>
             <h1>{cardData.cardname}</h1>
             <img src={cardData.image_normal} />
         </div>

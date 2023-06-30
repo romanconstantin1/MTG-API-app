@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../../store/appContext";
 
 import { CardSearchControls } from "./cardSearchControls.jsx";
@@ -6,8 +6,9 @@ import { detailedLog } from "../../utils/detailedLog";
 
 export const IsSingleFaced = () => {
     const { store } = useContext(Context)
-
-    detailedLog(store.searchedCard)
+    useEffect(()=> {
+        detailedLog(store.searchedCard)
+    },[store.searchedCard])
     const manaCost = () => {
         if (store.searchedCard.mana_cost) {
             return (
