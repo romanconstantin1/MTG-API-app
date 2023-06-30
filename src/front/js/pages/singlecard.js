@@ -29,10 +29,24 @@ export const SingleCard = () => {
         }    
     }
     detailedLog(cardData)
-    return (
-        <div>
+
+    const cardDisplayBuilder = () => {
+        return (
+        <>
             <h1>{cardData.cardname}</h1>
             <img src={cardData.image_normal} />
+            {cardData.back_side && (
+                <>
+                    <h1>{cardData.back_side[0].cardname}</h1>
+                    <img src={cardData.back_side[0].image_normal} />
+                </>
+            )}
+        </>
+        )
+    }
+    return (
+        <div>
+            {cardDisplayBuilder()}
         </div>
     );
 };

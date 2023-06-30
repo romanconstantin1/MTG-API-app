@@ -14,6 +14,10 @@ export const SavedCardsGrid = () => {
                     {store.savedCards.map((entry) => (
                         <div className="d-flex flex-column align-items-center" key={entry.id}>
                             <SavedCardInGrid key={`img ${entry.id}`} cardData={entry} />
+                            <h5>
+                                {entry.cardname} {entry.back_side && (`// ${entry.back_side[0].cardname}`)}
+                                
+                            </h5>
                             <SavedCardControls key={`ctrl ${entry.id}`} cardData={entry} />
                         </div>
                     ))}
