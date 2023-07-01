@@ -39,6 +39,8 @@ export const SavedDecksDisplay = () => {
                     ))}
                 </div>
             )
+        } else if (store.savedDecks.length == 0) {
+            return <h1>No saved decks</h1>
         } else {
             return <h1>Loading saved decks...</h1>
         }

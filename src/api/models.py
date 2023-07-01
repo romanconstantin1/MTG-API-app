@@ -138,6 +138,10 @@ class Cards(db.Model):
     is_restricted = db.Column(db.String(10), unique=False)
     oracle_text = db.Column(db.String(750), unique=False, nullable=True)
     flavor_text = db.Column(db.String(750), unique=False, nullable=True)
+    power = db.Column(db.Integer, nullable=True)
+    toughness = db.Column(db.Integer, nullable=True)
+    loyalty = db.Column(db.Integer, nullable=True)
+    defense = db.Column(db.Integer, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
     scryfall_id = db.Column(db.String(120), unique=True, nullable=True)
@@ -160,7 +164,11 @@ class Cards(db.Model):
             "artist": self.artist,
             "image_small": self.image_uri_small,
             "image_normal": self.image_uri_normal,
-            "scryfall_id": self.scryfall_id
+            "scryfall_id": self.scryfall_id,
+            "power": self.power,
+            "toughness": self.toughness,
+            "loyalty": self.loyalty,
+            "defense": self.defense
         }
 
         if self.card_sides:
@@ -175,7 +183,11 @@ class Cards(db.Model):
                     "flavor_text": side.side_flavor_text,
                     "artist": side.side_artist,
                     "image_small": side.side_image_uri_small,
-                    "image_normal": side.side_image_uri_normal
+                    "image_normal": side.side_image_uri_normal,
+                    "power": side.side_power,
+                    "toughness": side.side_toughness,
+                    "loyalty": side.side_loyalty,
+                    "defense": side.side_defense
                 })
             card_data["back_side"] = back_side_data
 
@@ -183,7 +195,7 @@ class Cards(db.Model):
     
     @classmethod
     def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, 
-               artist, image_uri_small, image_uri_normal, scryfall_id):
+               artist, image_uri_small, image_uri_normal, scryfall_id, power=None, toughness=None, loyalty=None, defense=None):
         new_card = cls()
         new_card.name = name
         new_card.card_type = card_type
@@ -197,6 +209,10 @@ class Cards(db.Model):
         new_card.image_uri_normal = image_uri_normal
         new_card.scryfall_id = scryfall_id
         new_card.cmc = cmc
+        new_card.power = power
+        new_card.toughness = toughness
+        new_card.loyalty = loyalty
+        new_card.defense = defense
 
         db.session.add(new_card)
         db.session.commit()
@@ -220,6 +236,10 @@ class CardSides(db.Model):
     side_name = db.Column(db.String(120), nullable=False)
     side_card_type = db.Column(db.String(120), nullable=False)
     side_mana_cost = db.Column(db.String(120))
+    side_power = db.Column(db.Integer, nullable=True)
+    side_toughness = db.Column(db.Integer, nullable=True)
+    side_loyalty = db.Column(db.Integer, nullable=True)
+    side_defense = db.Column(db.Integer, nullable=True)
     side_artist = db.Column(db.String(120), unique=False, nullable=False)
     side_image_uri_small = db.Column(db.String(250), nullable=False)
     side_image_uri_normal = db.Column(db.String(250), nullable=False)
@@ -231,7 +251,8 @@ class CardSides(db.Model):
     
     @classmethod
     def create(cls, card_id, side_name, side_card_type, side_mana_cost, side_oracle_text, side_flavor_text,
-               side_artist, side_image_uri_small, side_image_uri_normal):
+               side_artist, side_image_uri_small, side_image_uri_normal, side_power=None, side_toughness=None, 
+               side_loyalty=None, side_defense=None):
         new_side = cls()
         new_side.parent_card_id = card_id
         new_side.side_name = side_name
@@ -242,6 +263,10 @@ class CardSides(db.Model):
         new_side.side_artist = side_artist
         new_side.side_image_uri_small = side_image_uri_small
         new_side.side_image_uri_normal = side_image_uri_normal
+        new_side.side_power = side_power
+        new_side.side_toughness = side_toughness
+        new_side.side_loyalty = side_loyalty
+        new_side.side_defense = side_defense
 
         db.session.add(new_side)
         db.session.commit()

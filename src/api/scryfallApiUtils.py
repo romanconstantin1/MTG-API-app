@@ -2,9 +2,13 @@ class ScryfallAPIUtils(object):
     def create_db_card(cardData, isLegalIn):
         legalities = []
         is_restricted = False
-        flavor_text = ""
-        oracle_text = ""
-        scryfall_id = ""
+        flavor_text = None
+        oracle_text = None
+        scryfall_id = None
+        power = None
+        toughness = None
+        loyalty = None
+        defense = None
 
         for entry in isLegalIn:
             if isLegalIn[entry] == "legal":
@@ -19,11 +23,25 @@ class ScryfallAPIUtils(object):
             oracle_text = cardData["oracle_text"]
         if "id" in cardData:
             scryfall_id = cardData["id"]
+            
+        # Scryfall API stores these values as strings for some reason
+        if "power" in cardData:
+            power = int(cardData["power"])
+        if "toughness" in cardData:
+            toughness = int(cardData["toughness"])
+        if "loyalty" in cardData:
+            loyalty = int(cardData["loyalty"])
+        if "defense" in cardData:
+            defense = int(cardData["defense"])
 
         return {
             "name": cardData["name"],
             "card_type": cardData["type_line"],
             "mana_cost": cardData["mana_cost"],
+            "power": power,
+            "toughness": toughness,
+            "loyalty": loyalty,
+            "defense": defense,
             "oracle_text": oracle_text,
             "flavor_text": flavor_text,
             "legalities": legalities,

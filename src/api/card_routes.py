@@ -36,7 +36,10 @@ def handle_add():
             front_card_entry["image_uri_small"],
             front_card_entry["image_uri_normal"],
             front_card_entry["scryfall_id"],
-
+            front_card_entry["power"],
+            front_card_entry["toughness"],
+            front_card_entry["loyalty"],
+            front_card_entry["defense"]
         )
         
         back_card_in_db = CardSides.create(
@@ -48,14 +51,53 @@ def handle_add():
             back_card_entry["flavor_text"],
             back_card_entry["artist"],
             back_card_entry["image_uri_small"],
-            back_card_entry["image_uri_normal"]
+            back_card_entry["image_uri_normal"],
+            back_card_entry["power"],
+            back_card_entry["toughness"],
+            back_card_entry["loyalty"],
+            back_card_entry["defense"]
         )
         
         # Create the association between the front card and the back card
         front_card_in_db.back_side_id = back_card_in_db.id
         db.session.commit()
 
-        return jsonify("check print output"), 200
+        response = {
+            "card_front" : {
+                "artist": front_card_entry["artist"],
+                "card_type": front_card_entry["card_type"], 
+                "cardname": front_card_entry["name"],
+                "cmc": data["cmc"],
+                "id": front_card_in_db.id,
+                "image_normal": front_card_entry["image_uri_normal"],
+                "image_small": front_card_entry["image_uri_small"],
+                "legalities": front_card_entry["legalities"],
+                "is_restricted": front_card_entry["is_restricted"],
+                "mana_cost": front_card_entry["mana_cost"],
+                "oracle_text": front_card_entry["oracle_text"],
+                "flavor_text": front_card_entry["flavor_text"],
+                "power": front_card_entry["power"],
+                "toughness": front_card_entry["toughness"],
+                "loyalty": front_card_entry["loyalty"],
+                "defense": front_card_entry["defense"]
+            },
+            "card_back": {
+                "artist": back_card_entry["artist"],
+                "card_type": back_card_entry["card_type"], 
+                "cardname": back_card_entry["name"],
+                "image_normal": back_card_entry["image_uri_normal"],
+                "image_small": back_card_entry["image_uri_small"],
+                "mana_cost": back_card_entry["mana_cost"],
+                "oracle_text": back_card_entry["oracle_text"],
+                "flavor_text": back_card_entry["flavor_text"],
+                "power": back_card_entry["power"],
+                "toughness": back_card_entry["toughness"],
+                "loyalty": back_card_entry["loyalty"],
+                "defense": back_card_entry["defense"]
+            }
+        }
+
+        return jsonify(response), 200
 
     else: 
         card_entry = ScryfallAPIUtils.create_db_card(data, data["legalities"])
@@ -71,7 +113,11 @@ def handle_add():
             card_entry["artist"],
             card_entry["image_uri_small"],
             card_entry["image_uri_normal"],
-            card_entry["scryfall_id"]
+            card_entry["scryfall_id"],
+            card_entry["power"],
+            card_entry["toughness"],
+            card_entry["loyalty"],
+            card_entry["defense"]
             )
         
         response = {
@@ -86,7 +132,11 @@ def handle_add():
             "is_restricted": card_entry["is_restricted"],
             "mana_cost": card_entry["mana_cost"],
             "oracle_text": card_entry["oracle_text"],
-            "flavor_text": card_entry["flavor_text"]
+            "flavor_text": card_entry["flavor_text"],
+            "power": card_entry["power"],
+            "toughness": card_entry["toughness"],
+            "loyalty": card_entry["loyalty"],
+            "defense": card_entry["defense"]
             }
 
         return jsonify(response), 200
