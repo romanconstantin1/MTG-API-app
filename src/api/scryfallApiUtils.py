@@ -23,7 +23,7 @@ class ScryfallAPIUtils(object):
             oracle_text = cardData["oracle_text"]
         if "id" in cardData:
             scryfall_id = cardData["id"]
-            
+
         # Scryfall API stores these values as strings for some reason
         if "power" in cardData:
             power = int(cardData["power"])

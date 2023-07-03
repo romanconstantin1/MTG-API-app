@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 import { detailedLog } from "../utils/detailedLog";
+import { cardDisplayBuilder } from "../utils/cardDisplayBuilder";
 
 export const SingleCard = () => {
     const { store } = useContext(Context)
@@ -30,41 +31,6 @@ export const SingleCard = () => {
     }
     detailedLog(cardData)
 
-    const cardDisplayBuilder = (passedCardData) => {
-        return (
-        <div className="container">
-            <div className="row">
-                <h1>{passedCardData.cardname}</h1>
-                <div className="col">
-                    <img src={passedCardData.image_normal} />
-                </div>
-
-                <div className="col">
-                    {passedCardData.mana_cost && (
-                        <h5>Mana Cost: {passedCardData.mana_cost}</h5>
-                    )}
-                    <h5>Type: {passedCardData.card_type}</h5>
-                    {passedCardData.loyalty && (
-                        <h5>Starting Loyalty: {passedCardData.loyalty}</h5>
-                    )}
-                    {passedCardData.defense && (
-                        <h5>Defense: {passedCardData.defense}</h5>
-                    )}
-                    {passedCardData. power && passedCardData.toughness && (
-                        <h5>P/T: {passedCardData.power}/{passedCardData.toughness}</h5>
-                    )}
-                    {passedCardData.oracle_text && (
-                        <h5>Rules Text: {passedCardData.oracle_text}</h5>
-                    )}
-                    {passedCardData.flavor_text && (
-                        <h5>Flavor Text: <i>{passedCardData.flavor_text}</i></h5>
-                    )}
-                </div>
-                
-            </div>
-        </div>
-        )
-    }
     return (
         <div>
             {cardDisplayBuilder(cardData)}
