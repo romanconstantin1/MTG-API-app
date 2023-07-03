@@ -6,6 +6,8 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Search } from "./pages/search";
+import { Login } from "./pages/login";
+import { Signup } from "./pages/signup";
 import { SavedCards } from "./pages/cards";
 import { SavedDecks } from "./pages/decks";
 import { SingleCard } from "./pages/singlecard";
@@ -33,6 +35,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<Signup />} path="/signup" />
                         <Route element={<SavedCards />} path="/cards" />
                         <Route element={<SingleCard />} path="/cards/single/:carddata" />
                         <Route element={<SavedDecks />} path="/decks" />

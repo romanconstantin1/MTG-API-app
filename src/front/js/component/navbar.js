@@ -25,6 +25,15 @@ export const Navbar = () => {
 				<Link to="/decks">
 					<span className="navbar-brand mb-0 h1">saved decks</span>
 				</Link>
+				<div>
+					<Link to="/login">
+						<span className="navbar-brand mb-0 h1">log in</span>
+					</Link>
+					<Link to="/signup">
+						<span className="navbar-brand mb-0 h1">sign up</span>
+					</Link>
+				</div>
+				
 				{/* <div className="ml-auto">
 					<Link to="/demo">
 						<button className="btn btn-primary">Check the Context in action</button>
