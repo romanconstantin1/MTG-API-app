@@ -40,7 +40,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({searchedCard: {name: null, image_uris: {normal: null}}})
 			},
 
-			createNewUser: async (userData) => {	
+			createNewUser: async (userData) => {
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/create_new_user", {
 						method: "POST",

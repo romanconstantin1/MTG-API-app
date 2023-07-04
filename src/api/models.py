@@ -35,6 +35,10 @@ class Users(db.Model):
         db.session.commit()
 
         return new_user
+    
+    @classmethod
+    def read_all(cls):
+        return cls.query.all()
 
 cards_in_decks = db.Table('cards_in_decks',  
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),

@@ -10,15 +10,23 @@ users_api = Blueprint('users_api', __name__)
 @cross_origin()
 def handle_add():
     new_user = request.json
-    print(new_user)
-    Users.create(
-        new_user['username'],
-        new_user['firstname'],
-        new_user['email'],
-        new_user['password']
-    )
 
-    response = {
-        'message': f'new user {new_user["username"]} created'
-    }
-    return jsonify(response), 200
+    users = Users.read_all()
+    users_list = list(map(lambda user: user.serialize(), users))
+
+    if any(u['username'] == new_user['username'] for u in users_list):
+        return jsonify(f'The username {new_user["username"]} is already in use'), 400
+    elif any(u['email'] == new_user['email'] for u in users_list):
+        return jsonify('The email provided is already in use'), 400
+    else:
+        Users.create(
+            new_user['username'],
+            new_user['firstname'],
+            new_user['email'],
+            new_user['password']
+        )
+
+        response = {
+            'message': f'new user {new_user["username"]} created'
+        }
+        return jsonify(response), 200
