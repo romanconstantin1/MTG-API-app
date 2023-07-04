@@ -1,26 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { Context } from "../store/appContext.js";
 
 import { UserName } from "../component/loginAndSignup/userName.jsx";
 import { Password } from "../component/loginAndSignup/password.jsx";
 import { Email } from "../component/loginAndSignup/email.jsx";
 
 export const Signup = () => {
-    const [ firstName, setFirstName ] = useState("")
-    const [ username, setUsername ] = useState("")
-    const [ email, setEmail ] = useState("")
-    const [ emailConfirm, setEmaiConfirm ] = useState("")
-    const [ password, setPassword ] = useState("")
+    const { store, actions } = useContext(Context);
+
+    const [ firstName, setFirstName ] = useState("");
+    const [ username, setUsername ] = useState("");
+    const [ email, setEmail ] = useState("");
+    const [ emailConfirm, setEmaiConfirm ] = useState("");
+    const [ password, setPassword ] = useState("");;
     const [ passwordConfirm, setPasswordConfirm ] = useState("")
     
     const handleCreateAccount = () => {
         if (email !== emailConfirm) {
             return alert("Emails do not match!")
-        }
-        if (password !== passwordConfirm) {
+        } else if (password !== passwordConfirm) {
             return alert("Passwords do not match!")
-        }
-        if (
+        } else if (
             firstName === "" ||
             username === "" ||
             email === "" ||
@@ -29,21 +31,23 @@ export const Signup = () => {
             passwordConfirm === ""
            ) {
             return alert("One or more required fields is missing!")
-        }
-        alert(
-            `User name: ${username} \n
-            First name: ${firstName} \n
-            Email: ${email} \n
-            Password: ${password}
-            `
-        )
-        setFirstName("")
-        setUsername("")
-        setEmail("")
-        setEmaiConfirm("")
-        setPassword("")
-        setPasswordConfirm("")
-    }
+        } else {
+            const userData = {
+                "username": username,
+                "firstname": firstName,
+                "email": email,
+                "password": password
+            }
+
+            actions.createNewUser(userData)
+
+            setFirstName("")
+            setUsername("")
+            setEmail("")
+            setEmaiConfirm("")
+            setPassword("")
+            setPasswordConfirm("")
+    }};
 
     return (
         <div className="d-flex flex-column align-items-center">

@@ -11,6 +11,7 @@ from api.models import db
 from api.routes import api
 from api.card_routes import cards_api
 from api.deck_routes import decks_api
+from api.user_routes import users_api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -45,6 +46,7 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(cards_api, url_prefix="/api")
 app.register_blueprint(decks_api, url_prefix="/api")
+app.register_blueprint(users_api, url_prefix="/api")
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):

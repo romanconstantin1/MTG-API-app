@@ -40,8 +40,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({searchedCard: {name: null, image_uris: {normal: null}}})
 			},
 
+			createNewUser: async (userData) => {	
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/create_new_user", {
+						method: "POST",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(userData)
+					})
+					const data = await resp.json()
+					console.log(data)
+					return data;
+				} catch(error) {
+					console.log(`Error saving ${userData.username} to the db`, error)
+				}
+			},
+
 			getSavedCards: async () => {
-				try{
+				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/cards", {
 						method: "GET",
 						headers: {
@@ -51,7 +69,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await resp.json()
 					setStore({savedCards: data.saved_cards})
 					return data;
-				}catch(error){
+				} catch(error) {
 					console.log("Unable to get saved cards on load", error)
 				}
 			},

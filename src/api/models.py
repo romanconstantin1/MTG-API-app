@@ -21,6 +21,20 @@ class Users(db.Model):
             "email": self.email,
             "username": self.username
         }
+    
+    @classmethod
+    def create(cls, username, firstname, email, password, is_active=True):
+        new_user = cls()
+        new_user.username = username
+        new_user.firstname = firstname
+        new_user.email = email
+        new_user.password = password
+        new_user.is_active = is_active
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return new_user
 
 cards_in_decks = db.Table('cards_in_decks',  
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
