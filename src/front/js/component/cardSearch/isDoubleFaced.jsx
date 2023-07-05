@@ -16,6 +16,8 @@ export const IsDoubleFaced = () => {
         <>
             <div>
                 <h1>{store.searchedCard.name}</h1>
+                <h5>Login or create an account to save this card</h5>
+                
                 <CardSearchControls />
             </div>
 

@@ -10,7 +10,9 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    #decks = db.relationship("Decks", backref="user", lazy=True)
+    decks = db.relationship("Decks", backref="user", lazy=True)
+    cards = db.relationship("Cards", backref="user", lazy=True)
+
 
     def __repr__(self):
         return f'<User: {self.username}>'
@@ -48,7 +50,7 @@ cards_in_decks = db.Table('cards_in_decks',
 
 class Decks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(120), unique=False, nullable=False)
     format = db.Column(db.String(120), unique=False, nullable=False)
     card_total = db.Column(db.Integer)
@@ -147,6 +149,7 @@ class Decks(db.Model):
 # also consider p/t, planeswalker loyaly?
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(120), unique=False, nullable=False)
     card_type = db.Column(db.String(120), unique=False, nullable=False)
     mana_cost = db.Column(db.String(120), unique=False)
