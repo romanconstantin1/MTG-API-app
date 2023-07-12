@@ -6,6 +6,7 @@ import { Context } from "../../store/appContext.js";
 import { UserName } from "./userName.jsx";
 import { Password } from "./password.jsx";
 import { Email } from "./email.jsx";
+import { validateEmail } from "../../utils/validateEmail.js";
 
 export const SignupForm = () => {
     const { store, actions } = useContext(Context);
@@ -18,6 +19,10 @@ export const SignupForm = () => {
     const [ passwordConfirm, setPasswordConfirm ] = useState("")
     
     const handleCreateAccount = () => {
+        if (validateEmail(email) == false) {
+            return alert("Invalid email format!")
+        }
+
         if (email !== emailConfirm) {
             return alert("Emails do not match!")
         } else if (password !== passwordConfirm) {

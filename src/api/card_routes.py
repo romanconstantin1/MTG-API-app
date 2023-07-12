@@ -149,6 +149,8 @@ def handle_add():
 
 
 @cards_api.route("/delete_card/<int:id>", methods=["DELETE"])
+@jwt_required()
+@cross_origin()
 def remove_card(id):
     card = Cards.query.get(id)
     if card == None:

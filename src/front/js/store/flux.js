@@ -203,6 +203,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteCard: async (cardData) => {
 				const store = getStore()
 				const actions = getActions()
+				const token = localStorage.getItem("jwt_token");
 				const newSavedList = store.savedCards.filter(cardToFind => cardToFind.id !== cardData.id);
 				setStore({savedCards: newSavedList});
 
@@ -213,7 +214,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "DELETE",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`,
 						}
 					})
 					const data = await resp.json();
