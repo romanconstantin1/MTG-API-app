@@ -10,8 +10,8 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    decks = db.relationship("Decks", backref="user", lazy=True)
-    cards = db.relationship("Cards", backref="user", lazy=True)
+    decks = db.relationship("Decks", backref="user", lazy=True, cascade='all, delete')
+    cards = db.relationship("Cards", backref="user", lazy=True, cascade='all, delete')
 
 
     def __repr__(self):
@@ -144,9 +144,6 @@ class Decks(db.Model):
         else:
             return False
 
-    
-# check to see if rules text, flavor text, etc., can be made nullable for cards missing one/both
-# also consider p/t, planeswalker loyaly?
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -215,10 +212,11 @@ class Cards(db.Model):
         return card_data 
     
     @classmethod
-    def create(cls, name, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, 
+    def create(cls, name, user_id, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, 
                artist, image_uri_small, image_uri_normal, scryfall_id, power=None, toughness=None, loyalty=None, defense=None):
         new_card = cls()
         new_card.name = name
+        new_card.user_id = user_id
         new_card.card_type = card_type
         new_card.mana_cost = mana_cost
         new_card.oracle_text = oracle_text

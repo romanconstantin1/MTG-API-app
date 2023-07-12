@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Context } from "../../store/appContext";
@@ -7,6 +7,7 @@ import { UserName } from "./userName.jsx";
 import { Password } from "./password.jsx";
 
 export const LoginForm = () => {
+    const { actions } = useContext(Context)
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     
@@ -15,7 +16,12 @@ export const LoginForm = () => {
             return alert("One or more required parameters is missing")
         }
 
-        alert(`username: ${username} \n password: ${password}`)
+        const userData = {
+            "username": username,
+            "password": password
+        }
+
+        actions.loginUser(userData)
         setUsername("")
         setPassword("")
     }

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_cors import CORS, cross_origin
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.models import db, Users, Cards, Decks, cards_in_decks
 # from api.utils import generate_sitemap, APIException
 from api.scryfallApiUtils import ScryfallAPIUtils

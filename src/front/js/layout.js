@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
@@ -14,6 +14,7 @@ import { SingleCard } from "./pages/singlecard";
 import { SingleDeck } from "./pages/singledeck";
 import { CardInDeck } from "./component/savedDecks/cardInDeck.jsx";
 import injectContext from "./store/appContext";
+import { NeedAuth } from "./component/needAuth";
 import { NotFound } from "./component/notFound";
 
 import { Navbar } from "./component/navbar";
@@ -28,6 +29,16 @@ const Layout = () => {
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
 
+    const isAuthenticatedUser = localStorage.getItem("username");
+
+    const ProtectedRoute = ({ children }) => {
+        if (!isAuthenticatedUser) {
+          return <Navigate to="/autherror" replace />
+        }
+      
+        return children;
+      };
+
     return (
         <div>
             <BrowserRouter basename={basename}>
@@ -37,13 +48,37 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Signup />} path="/signup" />
-                        <Route element={<SavedCards />} path="/cards" />
-                        <Route element={<SingleCard />} path="/cards/single/:carddata" />
-                        <Route element={<SavedDecks />} path="/decks" />
-                        <Route element={<SingleDeck />} path="/decks/single/:deckdata" />
-                        <Route element={<Demo />} path="/demo" />
                         <Route element={<Search />} path="/search/:cardname" />
                         <Route element={<NotFound />} path="*" />
+                        <Route element={<NeedAuth />} path="autherror" />
+                        
+                        <Route element={
+                            <ProtectedRoute>
+                                <SavedCards />
+                            </ProtectedRoute>
+                        } path="/cards" />
+                            
+                        <Route element={
+                            <ProtectedRoute>
+                                <SingleCard />
+                            </ProtectedRoute>    
+                        } path="/cards/single/:carddata" />
+
+                        <Route element={
+                            <ProtectedRoute>
+                                <SavedDecks />
+                            </ProtectedRoute>
+                        } path="/decks" />
+
+                        <Route element={
+                            <ProtectedRoute>
+                                <SingleDeck />
+                            </ProtectedRoute>
+                        } path="/decks/single/:deckdata" />
+                        
+                        <Route element={<Demo />} path="/demo" />
+                        
+                        
                     </Routes>
                     <Footer />
                 </ScrollToTop>

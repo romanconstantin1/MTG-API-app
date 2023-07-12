@@ -6,12 +6,14 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
 from api.card_routes import cards_api
 from api.deck_routes import decks_api
 from api.user_routes import users_api
+from api.auth_routes import auth_api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -20,8 +22,10 @@ from api.commands import setup_commands
 ENV = os.getenv("FLASK_ENV")
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4ODc0OTY4NSwiaWF0IjoxNjg4NzQ5Njg1fQ.wrZIzha2IVKB0Mrw1xNg7y5633nIovmbQYIj053xgjk'
 app.url_map.strict_slashes = False
 
+jwt = JWTManager(app)
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -47,6 +51,7 @@ app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(cards_api, url_prefix="/api")
 app.register_blueprint(decks_api, url_prefix="/api")
 app.register_blueprint(users_api, url_prefix="/api")
+app.register_blueprint(auth_api, url_prefix="/api")
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):

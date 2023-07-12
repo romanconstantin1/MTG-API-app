@@ -1,6 +1,7 @@
-
 import { checkMaxQty } from "../utils/checkMaxQty";
 import { detailedLog } from "../utils/detailedLog";
+
+const basename = process.env.BASENAME;
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -41,6 +42,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			createNewUser: async (userData) => {
+				const actions = getActions()
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/create_new_user", {
 						method: "POST",
@@ -51,19 +53,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(userData)
 					})
 					const data = await resp.json()
-					console.log(data)
+					await actions.loginUser({
+						"username": userData.username,
+						"password": userData.password
+					})
 					return data;
 				} catch(error) {
 					console.log(`Error saving ${userData.username} to the db`, error)
 				}
 			},
 
+			loginUser: async (userData) => {
+				const actions = getActions()
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/token_auth", {
+						method: "POST",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(userData)
+					})
+					const data = await resp.json()
+					localStorage.setItem("jwt_token", data.token);
+					localStorage.setItem("user_id", data.user_id);
+					localStorage.setItem("username", data.username);
+					await actions.getSavedCards();
+					return data;
+				} catch(error) {
+					console.log(`Error trying to log in ${userData.username}`, error)
+				}
+			},
+
+			logoutUser: () => {
+				try {
+					localStorage.removeItem("jwt_token");
+					localStorage.removeItem("user_id");
+					localStorage.removeItem("username");
+					setStore({savedCards: []});
+					console.log("Successfully logged out")
+				} catch(error) {
+					alert("No user is currently logged in")
+				}
+
+			},
+
 			getSavedCards: async () => {
+				const token = localStorage.getItem("jwt_token");
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + "/api/cards", {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
 						}
 					})
 					const data = await resp.json()
@@ -120,7 +162,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			saveCardToDB: async (cardData) => {
 				const store = getStore()
 				const actions = getActions()
-
+				const token = localStorage.getItem("jwt_token");
+				const user_id = localStorage.getItem("user_id");
 				//check if a card being added is already in the DB
 				const savedCardCheck = store.savedCards.find(
 					cardExists => cardExists.scryfall_id === cardData.id || 
@@ -130,11 +173,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 				try {
+					cardData.user_id = user_id;
+					detailedLog(cardData)
 					const resp = await fetch(process.env.BACKEND_URL + "/api/add_card", {
 						method: "POST",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`,
 						},
 						body: JSON.stringify(cardData)
 					})

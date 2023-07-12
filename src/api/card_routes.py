@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_cors import CORS, cross_origin
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.models import db, Users, Cards, CardSides, Decks
 # from api.utils import generate_sitemap, APIException
 from api.scryfallApiUtils import ScryfallAPIUtils
@@ -7,10 +8,11 @@ from api.scryfallApiUtils import ScryfallAPIUtils
 cards_api = Blueprint('cards_api', __name__)
 
 @cards_api.route('/add_card', methods=['POST'])
+@jwt_required()
 @cross_origin()
 def handle_add():
     data = request.json
-    
+    print(data)
     # check if a card is double-sided & pass information accordingly
     if "card_faces" in data:
         front_side = data["card_faces"][0]
@@ -25,6 +27,7 @@ def handle_add():
         print(back_card_entry)
         front_card_in_db = Cards.create(
             front_card_entry["name"],
+            data["user_id"],
             front_card_entry["card_type"], 
             front_card_entry["mana_cost"],
             data["cmc"],
@@ -69,6 +72,7 @@ def handle_add():
                 "cardname": front_card_entry["name"],
                 "cmc": data["cmc"],
                 "id": front_card_in_db.id,
+                "user_id": data["user_id"],
                 "image_normal": front_card_entry["image_uri_normal"],
                 "image_small": front_card_entry["image_uri_small"],
                 "legalities": front_card_entry["legalities"],
@@ -103,6 +107,7 @@ def handle_add():
         card_entry = ScryfallAPIUtils.create_db_card(data, data["legalities"])
         card_in_db = Cards.create(
             card_entry["name"],
+            data["user_id"],
             data["type_line"], 
             data["mana_cost"],
             data["cmc"],
@@ -126,6 +131,7 @@ def handle_add():
             "cardname": card_entry["name"],
             "cmc": data["cmc"],
             "id": card_in_db.id,
+            "user_id": data["user_id"],
             "image_normal": card_entry["image_uri_normal"],
             "image_small": card_entry["image_uri_small"],
             "legalities": card_entry["legalities"],
@@ -153,9 +159,12 @@ def remove_card(id):
     return jsonify(response), 200
 
 @cards_api.route('/cards', methods=['GET'])
+@jwt_required()
 @cross_origin()
 def handle_cards():
-    cards = Cards.read_all()
+    user_id = get_jwt_identity()
+    print(user_id)
+    cards = Cards.query.filter_by(user_id=user_id).all()
     cards_list = list(map(lambda card: card.serialize(), cards))
 
     response = {
