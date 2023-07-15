@@ -8,21 +8,24 @@ from api.scryfallApiUtils import ScryfallAPIUtils
 decks_api = Blueprint('decks_api', __name__)
 
 @decks_api.route('/add_deck', methods=['POST'])
+@jwt_required()
 @cross_origin()
 def handle_add():
     deck_entry = request.json
     print(deck_entry)
     Decks.create(
         deck_entry['deckname'],
-        deck_entry['format']
+        deck_entry['format'],
+        deck_entry['user_id']
     )
 
     response = {
-        'message': f'{deck_entry["deckname"]} added to db'
+        'msg': f'{deck_entry["deckname"]} added to db'
     }
     return jsonify(response), 200
 
 @decks_api.route('/delete_deck/<int:id>', methods=['DELETE'])
+@jwt_required()
 def deck(id):
     deck = Decks.query.get(id)
     if deck == None:
@@ -33,9 +36,11 @@ def deck(id):
     return jsonify(response), 200
 
 @decks_api.route('/decks', methods=['GET'])
+@jwt_required()
 @cross_origin()
 def handle_cards():
-    decks = Decks.read_all()
+    user_id = get_jwt_identity()
+    decks = Decks.query.filter_by(user_id=user_id).all()
     decks_list = list(map(lambda deck: deck.serialize(), decks))
 
     response = {
@@ -59,9 +64,9 @@ def handle_add_to_deck():
 
     if deck is not None and card is not None:
         deck.add_card(card, quantity)
-        return jsonify('db: Card added to the deck successfully.'), 200
+        return jsonify({'msg': 'Card added to the deck successfully.'}), 200
     else:
-        return jsonify('db: Card or deck not found.'), 400
+        return jsonify({'msg': 'Card or deck not found.'}), 400
     
 @decks_api.route('/decks/delete_card', methods=['DELETE'])
 @cross_origin()

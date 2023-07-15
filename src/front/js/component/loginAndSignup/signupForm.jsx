@@ -18,7 +18,7 @@ export const SignupForm = () => {
     const [ password, setPassword ] = useState("");;
     const [ passwordConfirm, setPasswordConfirm ] = useState("")
     
-    const handleCreateAccount = () => {
+    const handleSubmit = () => {
         if (validateEmail(email) == false) {
             return alert("Invalid email format!")
         }
@@ -61,38 +61,45 @@ export const SignupForm = () => {
                 setUsername={setFirstName} 
                 labelText={"First name:"} 
                 elementId={"firstname"} 
-                />
+                handleSubmit={handleSubmit}
+            />
             <UserName 
                 username={username} 
                 setUsername={setUsername} 
                 labelText={"User name:"} 
-                elementId={"username"} 
-                />
+                elementId={"username"}
+                handleSubmit={handleSubmit} 
+            />
             <Email 
                 email={email} 
                 setEmail={setEmail} 
                 labelText={"E-mail:"} 
-                elementId={"email"} 
-                />
+                elementId={"email"}
+                handleSubmit={handleSubmit} 
+            />
             <Email 
                 email={emailConfirm} 
                 setEmail={setEmaiConfirm} 
                 labelText={"Confirm e-mail:"} 
-                elementId={"emailconfirm"} 
-                />
+                elementId={"emailconfirm"}
+                handleSubmit={handleSubmit} 
+            />
             <Password 
                 password={password} 
                 setPassword={setPassword} 
                 labelText={"Password:"} 
-                elementId={"password"} 
-                />
+                elementId={"password"}
+                handleSubmit={handleSubmit} 
+            />
             <Password 
                 password={passwordConfirm} 
                 setPassword={setPasswordConfirm} 
                 labelText={"Confirm password:"} 
-                elementId={"passwordconfirm"}/>
+                elementId={"passwordconfirm"}
+                handleSubmit={handleSubmit}
+            />
             
-            <button className="m-3" onClick={() => handleCreateAccount()}>Create account</button>
+            <button className="m-3" onClick={() => handleSubmit()}>Create account</button>
             
             <Link to="/login">Already have an account? Log in here</Link>
         </>

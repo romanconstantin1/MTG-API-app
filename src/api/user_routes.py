@@ -15,9 +15,9 @@ def handle_add():
     users_list = list(map(lambda user: user.serialize(), users))
 
     if any(u['username'] == new_user['username'] for u in users_list):
-        return jsonify(f'The username {new_user["username"]} is already in use'), 400
+        return jsonify({'msg': f'The username {new_user["username"]} is already in use'}), 400
     elif any(u['email'] == new_user['email'] for u in users_list):
-        return jsonify('The email provided is already in use'), 400
+        return jsonify({'msg':'The email provided is already in use'}), 400
     else:
         Users.create(
             new_user['username'],
@@ -27,6 +27,6 @@ def handle_add():
         )
 
         response = {
-            'message': f'new user {new_user["username"]} created'
+            'msg': f'new user {new_user["username"]} created'
         }
         return jsonify(response), 200

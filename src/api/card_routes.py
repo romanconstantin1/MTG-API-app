@@ -165,7 +165,6 @@ def remove_card(id):
 @cross_origin()
 def handle_cards():
     user_id = get_jwt_identity()
-    print(user_id)
     cards = Cards.query.filter_by(user_id=user_id).all()
     cards_list = list(map(lambda card: card.serialize(), cards))
 

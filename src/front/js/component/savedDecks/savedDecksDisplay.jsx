@@ -13,7 +13,9 @@ export const SavedDecksDisplay = () => {
     }
     
     const deckDisplayBuilder = () => {
-        if (store.savedDecks.length > 0) {
+        if (store?.savedDecks[0] == "default") {
+            return <h1>Loading saved decks...</h1>
+        } else if (store.savedDecks?.length > 0) {
             return (
                 <div>
                     {store.savedDecks.map((entry, index) => (        
@@ -39,10 +41,8 @@ export const SavedDecksDisplay = () => {
                     ))}
                 </div>
             )
-        } else if (store.savedDecks.length == 0) {
-            return <h1>No saved decks</h1>
         } else {
-            return <h1>Loading saved decks...</h1>
+            return <h1>No saved decks</h1>
         }
     }
     

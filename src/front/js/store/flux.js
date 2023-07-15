@@ -22,8 +22,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			randomCard: "",
 			searchedCard: {name: null, image_uris: {normal: null}},
 			allCardPrintings: [],
-			savedCards: [],
-			savedDecks: [],
+			savedCards: ["default"],
+			savedDecks: ["default"],
 			selectedCard: null
 		},
 		actions: {
@@ -53,6 +53,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(userData)
 					})
 					const data = await resp.json()
+
+					if (resp.status != 200) {
+						return alert(data.msg)
+					}
+
 					await actions.loginUser({
 						"username": userData.username,
 						"password": userData.password
@@ -75,10 +80,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(userData)
 					})
 					const data = await resp.json()
+					
+					if (resp.status != 200) {
+						return alert(data.msg)
+					}
+
 					localStorage.setItem("jwt_token", data.token);
 					localStorage.setItem("user_id", data.user_id);
 					localStorage.setItem("username", data.username);
 					await actions.getSavedCards();
+					await actions.getSavedDecks();
 					return data;
 				} catch(error) {
 					console.log(`Error trying to log in ${userData.username}`, error)
@@ -91,6 +102,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.removeItem("user_id");
 					localStorage.removeItem("username");
 					setStore({savedCards: []});
+					setStore({savedDecks: []})
 					console.log("Successfully logged out")
 				} catch(error) {
 					alert("No user is currently logged in")
@@ -169,6 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardExists => cardExists.scryfall_id === cardData.id || 
 								cardExists.scryfall_id === cardData.scryfall_id)
 				if (savedCardCheck) {
+					console.log("this card is already in the database")
 					return savedCardCheck
 				}
 
@@ -215,7 +228,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						headers: {
 							"Access-Control-Allow-Origin": "*",
 							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`,
+							"Authorization": `Bearer ${token}`
 						}
 					})
 					const data = await resp.json();
@@ -228,11 +241,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getSavedDecks: async () => {
+				const token = localStorage.getItem("jwt_token");
 				try{
 					const resp = await fetch(process.env.BACKEND_URL + "/api/decks", {
 						method: "GET",
 						headers: {
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
 						}
 					})
 					const data = await resp.json()
@@ -247,8 +262,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			saveDeckToDB: async (deckName, formatName) => {
 				const store = getStore()
 				const actions = getActions()
-
-				const newDeck = {"deckname": deckName, "format": formatName, "cards": []}
+				const token = localStorage.getItem("jwt_token");
+				const user_id = localStorage.getItem("user_id");
+				const newDeck = {"deckname": deckName, "format": formatName, "cards": [], "user_id": user_id}
 				const newDeckList = [...store.savedDecks]
 
 				newDeckList.push(newDeck)
@@ -259,7 +275,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "POST",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
 						},
 						body: JSON.stringify(newDeck)
 					})
@@ -273,8 +290,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			deleteDeck: async (deckData) => {
-				const store = getStore()
-				const actions = getActions()
+				const store = getStore();
+				const actions = getActions();
+				const token = localStorage.getItem("jwt_token");
 				const newSavedList = store.savedDecks.filter(deckToFind => {
 					return deckToFind.id !== deckData.id;
 				  	});
@@ -285,7 +303,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: "DELETE",
 						headers: {
 							"Access-Control-Allow-Origin": "*",
-							"Content-Type": "application/json"
+							"Content-Type": "application/json",
+							"Authorization": `Bearer ${token}`
 						}
 					})
 					const data = await resp.json();

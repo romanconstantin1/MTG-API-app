@@ -82,10 +82,11 @@ class Decks(db.Model):
             return 0
 
     @classmethod
-    def create(cls, name, format):
+    def create(cls, name, format, user_id):
         new_deck = cls()
         new_deck.name = name
         new_deck.format = format
+        new_deck.user_id = user_id
         new_deck.card_total = 0
 
         db.session.add(new_deck)
@@ -162,7 +163,7 @@ class Cards(db.Model):
     defense = db.Column(db.Integer, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
-    scryfall_id = db.Column(db.String(120), unique=True, nullable=True)
+    scryfall_id = db.Column(db.String(120), unique=False, nullable=True)
     card_sides = db.relationship('CardSides', cascade='all, delete')
 
     def __repr__(self):

@@ -16,8 +16,8 @@ export const SingleDeck = () => {
 
     useEffect(() => {
         if (store.savedDecks.length > 0) {
-            getDeck()
-            getDeckSize()
+            getDeck();
+            getDeckSize();
         }
     }, [store.savedDecks]);
 
@@ -28,10 +28,11 @@ export const SingleDeck = () => {
     const getDeck = () => {
         const deckToFind = store.savedDecks.find(foundDeck => 
             foundDeck.id === parsedData.id && foundDeck.deckname === parsedData.deckname);
+            
         if (deckToFind == undefined) {
-            setDeckData({"deckname": "No deck found!", "cards":[]})
+            setDeckData({"deckname": "No deck found!", "cards":[]});
         } else {
-            setDeckData(deckToFind)
+            setDeckData(deckToFind);
         };    
     };
 
@@ -49,11 +50,20 @@ export const SingleDeck = () => {
             <h1>{deckData.deckname}</h1>
             <h1>{deckData.card_total} cards</h1>
             <h1>{isLegal}</h1>
-            <div className="d-flex p-2">
-                {deckData.cards.map(cardindeck => (
-                    <CardInDeck props={[cardindeck, deckData]} />
-                ))}
+            <div className="row d-flex p-2" id="maindiv">
+                <div className = "col-8" id="maindeck">
+                    <h1>main deck</h1>
+                    <div className="d-flex p-2">
+                        {deckData.cards.map(cardindeck => (
+                            <CardInDeck props={[cardindeck, deckData]} />
+                        ))}
+                    </div>
+                </div>
+                <div className = "col-4" id="sideboard">
+                    <h1>sideboard</h1>
+                </div>
             </div>
+            
         </div>
     );
 };

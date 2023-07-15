@@ -14,26 +14,39 @@ export const LoginForm = () => {
     const handleSubmit = () => {
         if (username === "" || password === "") {
             return alert("One or more required parameters is missing")
-        }
+        };
 
         const userData = {
             "username": username,
             "password": password
-        }
+        };
 
-        actions.loginUser(userData)
-        setUsername("")
-        setPassword("")
-    }
+        actions.loginUser(userData);
+        setUsername("");
+        setPassword("");
+    };
 
     return (
         <>
-            <UserName username={username} setUsername={setUsername} labelText={"User name:"} elementId={"username"}/>
-            <Password password={password} setPassword={setPassword} labelText={"Password:"} elementId={"password"}/>
+            <UserName 
+                username={username} 
+                setUsername={setUsername} 
+                labelText={"User name:"} 
+                elementId={"username"}
+                handleSubmit={handleSubmit}  
+            />
+
+            <Password 
+                password={password} 
+                setPassword={setPassword} 
+                labelText={"Password:"} 
+                elementId={"password"}
+                handleSubmit={handleSubmit} 
+            />
             
             <button className="m-3" onClick={()=>handleSubmit()}>Log in</button>
 
             <Link to="/signup">Need to create an account? Sign up here</Link>
         </>
-    )
-}
+    );
+};
