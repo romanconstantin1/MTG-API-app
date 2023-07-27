@@ -90,6 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem("username", data.username);
 					await actions.getSavedCards();
 					await actions.getSavedDecks();
+					//console.log(data);
 					return data;
 				} catch(error) {
 					console.log(`Error trying to log in ${userData.username}`, error)

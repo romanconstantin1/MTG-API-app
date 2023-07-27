@@ -8,6 +8,7 @@ import { Demo } from "./pages/demo";
 import { Search } from "./pages/search";
 import { Login } from "./pages/login";
 import { Signup } from "./pages/signup";
+import { NewDeck } from "./pages/newdeck";
 import { SavedCards } from "./pages/cards";
 import { SavedDecks } from "./pages/decks";
 import { SingleCard } from "./pages/singlecard";
@@ -72,9 +73,16 @@ const Layout = () => {
 
                         <Route element={
                             <ProtectedRoute>
+                                <NewDeck />
+                            </ProtectedRoute>
+                        } path="/create_new_deck" />
+
+                        <Route element={
+                            <ProtectedRoute>
                                 <SingleDeck />
                             </ProtectedRoute>
                         } path="/decks/single/:deckdata" />
+                        
                         
                         <Route element={<Demo />} path="/demo" />
                         

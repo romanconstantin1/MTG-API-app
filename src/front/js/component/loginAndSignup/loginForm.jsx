@@ -1,17 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../../store/appContext";
 
 import { UserName } from "./userName.jsx";
 import { Password } from "./password.jsx";
+import { detailedLog } from "../../utils/detailedLog";
 
 export const LoginForm = () => {
     const { actions } = useContext(Context)
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
     
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (username === "" || password === "") {
             return alert("One or more required parameters is missing")
         };
@@ -21,9 +23,12 @@ export const LoginForm = () => {
             "password": password
         };
 
-        actions.loginUser(userData);
-        setUsername("");
-        setPassword("");
+        const logincheck = await actions.loginUser(userData);
+
+        if (logincheck.username === username) navigate("/cards");
+        // setUsername("");
+        // setPassword(""); 
+        
     };
 
     return (

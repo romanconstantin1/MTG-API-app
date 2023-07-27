@@ -12,6 +12,9 @@ export const SavedCards = () => {
 
     return (
         <div>
+            <div>
+                <h1>{localStorage.getItem("username")}'s saved cards</h1>
+            </div>
             <SavedCardsGrid />
             {/* {console.log("return")}
             {console.log(store.savedCards)} */}

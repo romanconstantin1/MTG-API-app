@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 import { SavedDecksDisplay } from "../component/savedDecks/savedDecksDisplay.jsx";
-import { DeckCreator } from "../component/deckCreator.jsx";
 
 export const SavedDecks = () => {
     const { store, actions } = useContext(Context);
 
     return (
         <div>
-            <DeckCreator />
+            <div>
+                    <h1>{localStorage.getItem("username")}'s saved decks</h1>
+            </div>
             <SavedDecksDisplay />
             {/* {console.log("return")}
             {console.log(store.savedCards)} */}

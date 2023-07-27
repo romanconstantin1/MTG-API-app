@@ -33,12 +33,16 @@ export const Navbar = () => {
 						</>
 					) : (
 						<>
-							<Link to="/cards">
-								<span className="navbar-brand mb-0 h1">saved cards</span>
+							<Link to="/create_new_deck">
+								<span className="navbar-brand mb-0 h1">new deck</span>
 							</Link>
 
 							<Link to="/decks">
 								<span className="navbar-brand mb-0 h1">saved decks</span>
+							</Link>
+
+							<Link to="/cards">
+								<span className="navbar-brand mb-0 h1">saved cards</span>
 							</Link>
 
 							<Link to="/" onClick={() => handleLogout()}>
