@@ -53,3 +53,19 @@ class ScryfallAPIUtils(object):
             # need to find a way to store all image uri's
             # but is that even necessary? normal images are 198kb
         }
+    
+    def check_for_sideboard(formatData):
+        noSideboard = [
+            "gladiator",
+            "commander",
+            "oathbreaker",
+            "brawl",
+            "historicbrawl",
+            "paupercommander",
+            "duel",
+            "predh"
+        ]
+        if formatData in noSideboard:
+            return False
+        else:
+            return True

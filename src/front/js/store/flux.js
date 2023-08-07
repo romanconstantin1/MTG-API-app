@@ -482,8 +482,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log(`Error adding ${cardData.cardname} to a deck`, error)
 				}
-			}
-			,
+			},
+
+			moveToSideboard: async (deckId, cardData) => {
+				const store = getStore()
+				let newDeckList = [...store.savedDecks]
+
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+				const findCardInDeck = {...findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)}
+				const findCardInSideboard = findDeck.sideboard.find(cardInDeck => cardInDeck.id == cardData.id)
+
+				if (findCardInSideboard) {
+					findCardInSideboard.quantity += 1
+				} else {
+					findCardInDeck.quantity = 1
+					findDeck.sideboard.push(findCardInDeck)
+				}
+
+				cardData.quantity -= 1
+
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_sideboard/', {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': cardData.id,
+							'quantity': cardData.quantity
+						})
+					})
+					
+					const data = await resp.json();
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${cardData.cardname} to the sideboard`, error)
+				}
+			},
+
 			getMessage: async () => {
 				try{
 					// fetching data from the backend

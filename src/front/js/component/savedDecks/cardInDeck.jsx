@@ -18,12 +18,12 @@ export const CardInDeck = (props) => {
         ))
 
     return (
-        <div className="text-center px-2">
-            <div className="card_display mx-auto">
+        <div className="d-flex flex-column align-items-center px-2">
+            {/* <div className="card_display mx-auto">
                 <Link to={`/cards/single/${cardString}`}>
                     <img src={cardData.image_small} />
                 </Link>
-            </div>
+            </div> */}
             <div>
                 <h4>{cardData.quantity}x {cardData.cardname}</h4>
             </div>

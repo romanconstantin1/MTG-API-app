@@ -21,8 +21,7 @@ export const CardInDeckControls = (props) => {
             alert(deckSizeCheck)
         } else {
             actions.changeCardQuantity(deckData.id, cardData, 1)
-        }
-        
+        }     
     }
 
     const handleSubtractCard = () => {
@@ -32,6 +31,10 @@ export const CardInDeckControls = (props) => {
             actions.changeCardQuantity(deckData.id, cardData, -1)
             console.log(cardData.quantity)
         }
+    }
+
+    const handleMoveToSideboard = () => {
+        actions.moveToSideboard(deckData.id, cardData)
     }
 
     const handleDeleteCard = () => {
@@ -47,6 +50,7 @@ export const CardInDeckControls = (props) => {
             <button className="mx-1" onClick={() => handleAddCard()}>+</button>
             <button onClick={() => handleSubtractCard()}>-</button>
             <button className="mx-1" onClick={() => handleDeleteCard()}>Delete this card</button>
+            <button className="mx-1" onClick={() => handleMoveToSideboard()}>Move to sideboard</button>
             <button className="mx-1" onClick={() => handleView()}>Test</button>
         </>
     )

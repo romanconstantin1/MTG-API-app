@@ -48,6 +48,12 @@ cards_in_decks = db.Table('cards_in_decks',
     db.Column("quantity", db.Integer)
 )
 
+cards_in_sideboards = db.Table('cards_in_sideboards',  
+    db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
+    db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
+    db.Column("quantity", db.Integer)
+)
+
 class Decks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -55,27 +61,35 @@ class Decks(db.Model):
     format = db.Column(db.String(120), unique=False, nullable=False)
     card_total = db.Column(db.Integer)
     cards = db.relationship('Cards', secondary=cards_in_decks, backref=db.backref('decks', lazy='dynamic'))
+    sideboard = db.relationship('Cards', secondary=cards_in_sideboards, backref=db.backref('decks_in_sideboard', lazy='dynamic'), uselist=True)
 
     def __repr__(self):
         return f'<Deck: {self.name}>'
 
     def serialize(self):
-        serialized_cards = []
+        main_deck = []
         for card in self.cards:
             serialized_card = card.serialize()
-            serialized_card['quantity'] = self.get_card_quantity(card)
-            serialized_cards.append(serialized_card)
+            serialized_card['quantity'] = self.get_card_quantity(card, cards_in_decks)
+            main_deck.append(serialized_card)
+
+        sideboard = []
+        for card in self.sideboard:
+            serialized_card = card.serialize()
+            serialized_card['quantity'] = self.get_card_quantity(card, cards_in_sideboards)
+            sideboard.append(serialized_card)
 
         return {
             "id": self.id,
             "deckname": self.name,
             "format": self.format,
-            "cards": serialized_cards,
+            "cards": main_deck,
+            "sideboard": sideboard,
             "card_total": self.card_total
         }
 
-    def get_card_quantity(self, card):
-        existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
+    def get_card_quantity(self, card, table):
+        existing_card = db.session.query(table).filter_by(card_id=card.id, deck_id=self.id).first()
         if existing_card:
             return existing_card.quantity
         else:
@@ -107,19 +121,21 @@ class Decks(db.Model):
     
     def add_card(self, card, quantity):
         existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
+        
         if existing_card:
             new_quantity = existing_card.quantity + quantity
-            print(f'new quantity is {new_quantity}')
             db.session.execute(cards_in_decks.update().where(
                 and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
             ).values(quantity=new_quantity))
+
         else:
             new_card_in_deck = cards_in_decks.insert().values(card_id=card.id, deck_id=self.id, quantity=quantity)
             db.session.execute(new_card_in_deck)
+
         self.card_total += quantity
         db.session.commit()
         return None
-   
+
     def change_card_qty(self, card, quantity):
         existing_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
         new_quantity = existing_card.quantity + quantity
@@ -140,10 +156,35 @@ class Decks(db.Model):
             ))
             self.card_total -= quantity
             db.session.commit()
-            print()
             return True
         else:
             return False
+        
+    def add_to_sideboard(self, card, quantity):
+        existing_card = db.session.query(cards_in_sideboards).filter_by(card_id=card.id, deck_id=self.id).first()
+        existing_maindeck_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
+        
+        if existing_card:
+            new_quantity = existing_card.quantity + quantity
+
+            db.session.execute(cards_in_sideboards.update().where(
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
+            ).values(quantity=new_quantity))
+
+            db.session.execute(cards_in_decks.update().where(
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
+            ).values(quantity=existing_maindeck_card.quantity - 1))        
+
+        else:
+            new_card_in_sideboard = cards_in_sideboards.insert().values(card_id=card.id, deck_id=self.id, quantity=quantity)
+            db.session.execute(new_card_in_sideboard)
+
+            db.session.execute(cards_in_decks.update().where(
+                and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
+            ).values(quantity=existing_maindeck_card.quantity - 1))
+        
+        db.session.commit()
+        return None
 
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)

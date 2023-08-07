@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, url_for, Blueprint
 from flask_cors import CORS, cross_origin
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from api.models import db, Users, Cards, Decks, cards_in_decks
+from api.models import db, Users, Cards, Decks, cards_in_decks, cards_in_sideboards
 # from api.utils import generate_sitemap, APIException
 from api.scryfallApiUtils import ScryfallAPIUtils
 
@@ -11,16 +11,19 @@ decks_api = Blueprint('decks_api', __name__)
 @jwt_required()
 @cross_origin()
 def handle_add():
-    deck_entry = request.json
-    print(deck_entry)
+    data = request.get_json()
+    deck_name = data.get('deckname')
+    deck_format = data.get('format')
+    user_id = data.get('user_id')
+    
     Decks.create(
-        deck_entry['deckname'],
-        deck_entry['format'],
-        deck_entry['user_id']
+        deck_name,
+        deck_format,
+        user_id
     )
 
     response = {
-        'msg': f'{deck_entry["deckname"]} added to db'
+        'msg': f'{deck_name} added to db'
     }
     return jsonify(response), 200
 
@@ -53,7 +56,6 @@ def handle_cards():
 @cross_origin()
 def handle_add_to_deck():
     data = request.get_json()
-    print(data)
     deck_id = data.get('deck_id')
     card_id = data.get('card_id')
     quantity = data.get('quantity')
@@ -92,6 +94,8 @@ def handle_remove_from_deck():
 @cross_origin()
 def handle_change_card_qty():
     data = request.get_json()
+    print('qty change')
+    print(data)
     deck_id = data.get('deck_id')
     card_id = data.get('card_id')
     quantity = data.get('quantity')
@@ -104,3 +108,20 @@ def handle_change_card_qty():
         return jsonify({'msg':'Card quantity changed successfully.'}), 200
     else:
         return jsonify({'msg':'Card or deck not found.'}), 400
+    
+@decks_api.route('/decks/add_sideboard', methods=['PUT'])
+@cross_origin()
+def handle_add_sideboard():
+    data = request.get_json()
+    deck_id = data.get('deck_id')
+    card_id = data.get('card_id')
+    quantity = data.get('quantity')
+
+    deck = Decks.query.get(deck_id)
+    card = Cards.query.get(card_id)
+
+    if deck is not None and card is not None:
+        deck.add_to_sideboard(card, quantity)
+        return jsonify({'msg': 'Card added to the sideboard successfully.'}), 200
+    else:
+        return jsonify({'msg': 'Card or deck not found.'}), 400
