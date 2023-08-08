@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 import { CardInDeck } from "../component/savedDecks/cardInDeck.jsx";
+import { CardInSideboard } from "../component/savedDecks/cardInSideboard.jsx";
 import { detailedLog } from "../utils/detailedLog";
 import { checkDeckSize } from "../utils/checkDeckSize";
 
@@ -63,7 +64,7 @@ export const SingleDeck = () => {
                     <div className = "col-4" id="sideboard">
                         <h1>sideboard</h1>
                         {deckData.sideboard.map(cardinsideboard => (
-                            <CardInDeck props={[cardinsideboard, deckData]} />
+                            <CardInSideboard props={[cardinsideboard, deckData]} />
                         ))}
                     </div>
                 )}

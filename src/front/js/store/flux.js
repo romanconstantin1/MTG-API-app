@@ -486,6 +486,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			moveToSideboard: async (deckId, cardData) => {
 				const store = getStore()
+				const actions = getActions()
 				let newDeckList = [...store.savedDecks]
 
 				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
@@ -494,12 +495,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				if (findCardInSideboard) {
 					findCardInSideboard.quantity += 1
+					cardData.quantity -= 1
 				} else {
 					findCardInDeck.quantity = 1
 					findDeck.sideboard.push(findCardInDeck)
+					cardData.quantity -= 1
 				}
-
-				cardData.quantity -= 1
 
 				setStore({savedDecks: newDeckList})
 
@@ -517,10 +518,93 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					})
 					
+					if (cardData.quantity <= 0) {
+						await actions.deleteCardFromDeck(deckId, cardData)
+					}
+
 					const data = await resp.json();
 					return data;
 				} catch (error) {
 					console.log(`Error adding ${cardData.cardname} to the sideboard`, error)
+				}
+			},
+
+			moveToMaindeck: async (deckId, cardData) => {
+				const store = getStore()
+				const actions = getActions()
+				let newDeckList = [...store.savedDecks]
+
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
+				const findCardInDeck = findDeck.cards.find(cardInDeck => cardInDeck.id == cardData.id)
+				const findCardInSideboard = {...findDeck.sideboard.find(cardInDeck => cardInDeck.id == cardData.id)}
+
+				if (findCardInDeck) {
+					findCardInDeck.quantity += 1
+					cardData.quantity -= 1
+				} else {
+					findCardInSideboard.quantity = 1
+					findDeck.cards.push(findCardInSideboard)
+					cardData.quantity -= 1
+				}
+
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/move_card_main/', {
+						method: "PUT",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': cardData.id,
+							'quantity': cardData.quantity
+						})
+					})
+					
+					// if (cardData.quantity <= 0) {
+					// 	await actions.deleteCardFromDeck(deckId, cardData)
+					// }
+
+					const data = await resp.json();
+					return data;
+				} catch (error) {
+					console.log(`Error adding ${cardData.cardname} to the sideboard`, error)
+				}
+			},
+
+			deleteCardFromSideboard: async (deckId, cardData) => {
+				const store = getStore()
+				const actions = getActions()
+
+				let newDeckList = [...store.savedDecks]
+				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
+				if (cardListSearch) {
+					const cardIndex = cardListSearch.sideboard.indexOf(cardData)
+					//cardListSearch.card_total -= cardData.quantity
+					cardListSearch.sideboard.splice(cardIndex, 1)
+				}
+				setStore({savedDecks: newDeckList})
+
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/delete_sideboard/', {
+						method: "DELETE",
+						headers: {
+							"Access-Control-Allow-Origin": "*",
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({
+							'deck_id': deckId,
+							'card_id': cardData.id,
+							'quantity': cardData.quantity
+						})
+					})
+					const data = await resp.json();
+					console.log(data)
+					return data;
+				} catch (error) {
+					console.log(`Error removing ${cardData.cardname} from a deck`, error)
 				}
 			},
 

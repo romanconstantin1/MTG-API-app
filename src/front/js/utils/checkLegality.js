@@ -12,7 +12,7 @@ export const checkFormatLegality = (cardData, deckData, deckID, cardIsInDB) => {
     } else {
         var isLegalIn = cardData.legalities
     }
-    console.log(isLegalIn)
+    //console.log(isLegalIn)
     const findDeck = deckData.find(deck => deck.id == deckID)
     if (isLegalIn.includes(findDeck.format)) {
         return true

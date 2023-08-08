@@ -75,8 +75,6 @@ def handle_add_to_deck():
 def handle_remove_from_deck():
     data = request.get_json()
 
-    print(data)
-
     deck_id = data.get('deck_id')
     card_id = data.get('card_id')
     quantity = data.get('quantity')
@@ -117,6 +115,10 @@ def handle_add_sideboard():
     card_id = data.get('card_id')
     quantity = data.get('quantity')
 
+    print(f'deck id is {deck_id}')
+    print(f'card id is {card_id}')
+    print(f'quantity is {quantity}')
+
     deck = Decks.query.get(deck_id)
     card = Cards.query.get(card_id)
 
@@ -125,3 +127,37 @@ def handle_add_sideboard():
         return jsonify({'msg': 'Card added to the sideboard successfully.'}), 200
     else:
         return jsonify({'msg': 'Card or deck not found.'}), 400
+    
+@decks_api.route('/decks/move_card_main', methods=['PUT'])
+@cross_origin()
+def handle_move_to_main():
+    data = request.get_json()
+    deck_id = data.get('deck_id')
+    card_id = data.get('card_id')
+    quantity = data.get('quantity')
+
+    deck = Decks.query.get(deck_id)
+    card = Cards.query.get(card_id)
+
+    if deck is not None and card is not None:
+        deck.move_to_main(card, quantity)
+        return jsonify({'msg': 'Card added to the sideboard successfully.'}), 200
+    else:
+        return jsonify({'msg': 'Card or deck not found.'}), 400
+
+@decks_api.route('/decks/delete_sideboard', methods=['DELETE'])
+@cross_origin()
+def handle_delete_sideboard():
+    data = request.get_json()
+    deck_id = data.get('deck_id')
+    card_id = data.get('card_id')
+    quantity = data.get('quantity')
+
+    deck = Decks.query.get(deck_id)
+    card = Cards.query.get(card_id)
+
+    if deck is not None and card is not None:
+        deck.delete_sideboard(card, quantity)
+        return jsonify({'msg':'Card removed from the deck successfully.'}), 200
+    else:
+        return jsonify({'msg':'Card or deck not found.'}), 400
