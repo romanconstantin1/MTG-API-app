@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
+from api.scryfallApiUtils import ScryfallAPIUtils
 
 db = SQLAlchemy()
 
@@ -61,6 +62,7 @@ class Decks(db.Model):
     format = db.Column(db.String(120), unique=False, nullable=False)
     card_total = db.Column(db.Integer)
     cards = db.relationship('Cards', secondary=cards_in_decks, backref=db.backref('decks', lazy='dynamic'))
+    sideboard_total = db.Column(db.Integer, nullable=True)
     sideboard = db.relationship('Cards', secondary=cards_in_sideboards, backref=db.backref('decks_in_sideboard', lazy='dynamic'), uselist=True)
 
     def __repr__(self):
@@ -79,14 +81,19 @@ class Decks(db.Model):
             serialized_card['quantity'] = self.get_card_quantity(card, cards_in_sideboards)
             sideboard.append(serialized_card)
 
-        return {
+        deck_output = {
             "id": self.id,
             "deckname": self.name,
             "format": self.format,
             "cards": main_deck,
-            "sideboard": sideboard,
             "card_total": self.card_total
         }
+        if ScryfallAPIUtils.check_for_sideboard(self.format):
+            deck_output["sideboard"] = sideboard
+            deck_output["sideboard_total"] = self.sideboard_total
+
+
+        return deck_output
 
     def get_card_quantity(self, card, table):
         existing_card = db.session.query(table).filter_by(card_id=card.id, deck_id=self.id).first()
@@ -102,6 +109,10 @@ class Decks(db.Model):
         new_deck.format = format
         new_deck.user_id = user_id
         new_deck.card_total = 0
+
+        if ScryfallAPIUtils.check_for_sideboard:
+            new_deck.sideboard = []
+            new_deck.sideboard_total = 0
 
         db.session.add(new_deck)
         db.session.commit()
@@ -160,7 +171,7 @@ class Decks(db.Model):
         else:
             return False
         
-    def add_to_sideboard(self, card, quantity):
+    def add_to_sideboard(self, card):
         existing_card = db.session.query(cards_in_sideboards).filter_by(card_id=card.id, deck_id=self.id).first()
         existing_maindeck_card = db.session.query(cards_in_decks).filter_by(card_id=card.id, deck_id=self.id).first()
         
@@ -183,6 +194,7 @@ class Decks(db.Model):
                 and_(cards_in_decks.c.card_id == card.id, cards_in_decks.c.deck_id == self.id)
             ).values(quantity=existing_maindeck_card.quantity - 1))
         
+        self.sideboard_total += 1
         db.session.commit()
         return None
     
@@ -209,6 +221,7 @@ class Decks(db.Model):
                 and_(cards_in_sideboards.c.card_id == card.id, cards_in_sideboards.c.deck_id == self.id)
             ).values(quantity=existing_card.quantity - 1))
         
+        self.sideboard_total -= 1
         db.session.commit()
         return None
     

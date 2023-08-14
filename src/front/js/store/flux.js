@@ -502,6 +502,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardData.quantity -= 1
 				}
 
+				findDeck.card_total -= 1
+				findDeck.sideboard_total += 1
 				setStore({savedDecks: newDeckList})
 
 				try {
@@ -546,7 +548,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					findDeck.cards.push(findCardInSideboard)
 					cardData.quantity -= 1
 				}
-
+				
+				findDeck.card_total += 1
+				findDeck.sideboard_total -= 1
 				setStore({savedDecks: newDeckList})
 
 				try {
@@ -579,12 +583,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const actions = getActions()
 
 				let newDeckList = [...store.savedDecks]
+
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId)
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
 					const cardIndex = cardListSearch.sideboard.indexOf(cardData)
 					//cardListSearch.card_total -= cardData.quantity
 					cardListSearch.sideboard.splice(cardIndex, 1)
 				}
+
+				findDeck.sideboard_total -= cardData.quantity
 				setStore({savedDecks: newDeckList})
 
 				try {

@@ -42,7 +42,7 @@ export const CardInDeckControls = (props) => {
     }
 
     const handleView = () => {
-        console.log(cardData)
+        console.log(deckData)
     }
 
     return (
@@ -50,7 +50,9 @@ export const CardInDeckControls = (props) => {
             <button className="mx-1" onClick={() => handleAddCard()}>+</button>
             <button onClick={() => handleSubtractCard()}>-</button>
             <button className="mx-1" onClick={() => handleDeleteCard()}>Delete from main deck</button>
-            <button className="mx-1" onClick={() => handleMoveToSideboard()}>Move to sideboard</button>
+            {deckData.sideboard && deckData.sideboard_total !== undefined && (
+                <button className="mx-1" onClick={() => handleMoveToSideboard()}>Move to sideboard</button>
+            )}
             {/* <button className="mx-1" onClick={() => handleView()}>Test</button> */}
         </>
     )

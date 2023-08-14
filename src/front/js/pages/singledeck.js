@@ -46,10 +46,22 @@ export const SingleDeck = () => {
         }
     }
 
+    const getDeckTotal = () => {
+        var deckTotal = deckData.card_total
+        if (deckData.sideboard && deckData.sideboard_total !== undefined) deckTotal += deckData.sideboard_total
+
+        return deckTotal
+    }
+
     return (
         <div>
             <h1>{deckData.deckname}</h1>
-            <h1>{deckData.card_total} cards</h1>
+            <h1>{getDeckTotal()} cards</h1>
+
+            {deckData.sideboard && deckData.sideboard_total !== undefined && (
+               <h1>({deckData.card_total} in main deck, {deckData.sideboard_total} in sideboard)</h1> 
+            )}
+
             <h1>{isLegal}</h1>
             <div className="row p-2" id="maindiv">
                 <div className = "col-8" id="maindeck">
