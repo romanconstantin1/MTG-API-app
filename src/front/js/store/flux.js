@@ -141,6 +141,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					alert(`Something went wrong while fetching a random card`, error)
 				}
 			},
+			
+			// stretch goal: add a way to show & save specific printings
 
 			getAllPrintings: async (encodedname) => {
 				const store = getStore()
@@ -318,6 +320,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// the next few functions are basically the same; would be good to find a way to reduce it to one
 			// or add more modularity to how the functions... function
+
+			// rendering in general is a little wonky here
+
 			addSavedCardToDeck: async (deckId, cardData, quantity) => {
 				const store = getStore()
 				let newDeckList = [...store.savedDecks]
@@ -487,7 +492,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			// when cards are moved to/from sideboard they briefly exist with a quantity of 0
 			// need to fix that so that they don't display if the quantity is 0 
-			
+
 			// alternatively, a separate generic function that deletes a card from the list
 			// but only on the front end?
 

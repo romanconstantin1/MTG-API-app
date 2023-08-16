@@ -24,3 +24,11 @@ export const checkDeckSize = (deckData, card_total) => {
         return true
     } 
 }
+
+export const checkSideboardSize = (deckData, sideboard_total) => {
+    if (sideboard_total > 15) {
+        return `${deckData.deckname} cannot have more than 15 cards in the sideboard`
+    } else {
+        return true
+    }
+}

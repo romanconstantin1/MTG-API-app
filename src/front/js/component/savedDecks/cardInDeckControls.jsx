@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/appContext";
 
 import { checkMaxQty } from "../../utils/checkMaxQty";
-import { checkDeckSize } from "../../utils/checkDeckSize";
+import { checkDeckSize, checkSideboardSize } from "../../utils/checkDeckSize";
 import { bool, string } from "prop-types";
 
 export const CardInDeckControls = (props) => {
@@ -34,7 +34,12 @@ export const CardInDeckControls = (props) => {
     }
 
     const handleMoveToSideboard = () => {
-        actions.moveToSideboard(deckData.id, cardData)
+        const sideboardSizeCheck = checkSideboardSize(deckData, deckData.sideboard_total + 1)
+        if (typeof sideboardSizeCheck === "string") {
+            alert(sideboardSizeCheck)
+        } else {
+            actions.moveToSideboard(deckData.id, cardData)
+        }
     }
 
     const handleDeleteCard = () => {
