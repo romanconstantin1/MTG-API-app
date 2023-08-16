@@ -35,6 +35,10 @@ export const CardInSideboardControls = (props) => {
 
     const handleMoveToMaindeck = () => {
         actions.moveToMaindeck(deckData.id, cardData)
+
+        // if (cardData.quantity - 1 <= 0) {
+        //     actions.deleteCardFromSideboard(deckData.id, cardData)
+        // }
     }
 
     const handleDeleteCard = () => {

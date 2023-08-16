@@ -427,6 +427,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardListSearch.card_total -= cardData.quantity
 					cardListSearch.cards.splice(cardIndex, 1)
 				}
+				
 				setStore({savedDecks: newDeckList})
 
 				try {
@@ -483,6 +484,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(`Error adding ${cardData.cardname} to a deck`, error)
 				}
 			},
+
+			// when cards are moved to/from sideboard they briefly exist with a quantity of 0
+			// need to fix that so that they don't display if the quantity is 0 
+			
+			// alternatively, a separate generic function that deletes a card from the list
+			// but only on the front end?
 
 			moveToSideboard: async (deckId, cardData) => {
 				const store = getStore()
@@ -548,7 +555,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					findDeck.cards.push(findCardInSideboard)
 					cardData.quantity -= 1
 				}
-				
+
 				findDeck.card_total += 1
 				findDeck.sideboard_total -= 1
 				setStore({savedDecks: newDeckList})
@@ -567,9 +574,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 					})
 					
-					// if (cardData.quantity <= 0) {
-					// 	await actions.deleteCardFromDeck(deckId, cardData)
-					// }
+					if (cardData.quantity <= 0) {
+						await actions.deleteCardFromSideboard(deckId, cardData)
+					}
 
 					const data = await resp.json();
 					return data;
@@ -588,7 +595,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
 					const cardIndex = cardListSearch.sideboard.indexOf(cardData)
-					//cardListSearch.card_total -= cardData.quantity
 					cardListSearch.sideboard.splice(cardIndex, 1)
 				}
 

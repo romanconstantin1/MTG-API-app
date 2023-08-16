@@ -123,7 +123,7 @@ def handle_add_sideboard():
     card = Cards.query.get(card_id)
 
     if deck is not None and card is not None:
-        deck.add_to_sideboard(card, quantity)
+        deck.add_to_sideboard(card)
         return jsonify({'msg': 'Card added to the sideboard successfully.'}), 200
     else:
         return jsonify({'msg': 'Card or deck not found.'}), 400
@@ -152,12 +152,12 @@ def handle_delete_sideboard():
     deck_id = data.get('deck_id')
     card_id = data.get('card_id')
     quantity = data.get('quantity')
-
+    print("deleting from sideboard")
     deck = Decks.query.get(deck_id)
     card = Cards.query.get(card_id)
 
     if deck is not None and card is not None:
         deck.delete_sideboard(card, quantity)
-        return jsonify({'msg':'Card removed from the deck successfully.'}), 200
+        return jsonify({'msg':'Card removed from the sideboard successfully.'}), 200
     else:
         return jsonify({'msg':'Card or deck not found.'}), 400
