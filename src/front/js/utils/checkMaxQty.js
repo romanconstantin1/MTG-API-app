@@ -20,14 +20,22 @@ const maxQuantities = {
   export const checkMaxQty = (deckData, cardData, cardQty) => {
     if (anyNumberOf.includes(cardData.cardname) || cardData.card_type.includes("Basic Land")) {
       return true;
-    }
+    };
+
     const maxQty = getMaxQuantity(deckData.format, cardData);
-    if (cardQty > maxQty) {
+
+    const findCardInDeck = deckData?.cards.find(cardInDeck => cardInDeck.id == cardData.id);
+    const findCardInSideboard = deckData?.sideboard.find(cardInSideboard => cardInSideboard.id == cardData.id);
+    
+    const deckCardQty = findCardInDeck?.quantity ?? 0;
+    const sideboardCardQty = findCardInSideboard?.quantity ?? 0;
+
+    if ((deckCardQty + sideboardCardQty + 1) > maxQty) {
       return (
         `"${deckData.deckname}" already contains ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.` + 
         ` A ${deckData.format} deck cannot contain more than ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.`
         );
-    }
+    };
 
     return true;
   };

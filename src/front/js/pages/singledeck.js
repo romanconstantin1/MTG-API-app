@@ -67,16 +67,16 @@ export const SingleDeck = () => {
                 <div className = "col-8" id="maindeck">
                     <h1>main deck</h1>
                     <div className="d-flex flex-column justify-content-start p-2">
-                        {deckData.cards.map(cardindeck => (
-                            <CardInDeck props={[cardindeck, deckData]} />
+                        {deckData.cards.map((cardindeck, index) => (
+                            <CardInDeck key={cardindeck.id} props={[cardindeck, deckData]} />
                         ))}
                     </div>
                 </div>
                 {deckData.sideboard && deckData.sideboard.length > 0 && (
                     <div className = "col-4" id="sideboard">
                         <h1>sideboard</h1>
-                        {deckData.sideboard.map(cardinsideboard => (
-                            <CardInSideboard props={[cardinsideboard, deckData]} />
+                        {deckData.sideboard.map((cardinsideboard, index) => (
+                            <CardInSideboard key={cardinsideboard.id} props={[cardinsideboard, deckData]} />
                         ))}
                     </div>
                 )}

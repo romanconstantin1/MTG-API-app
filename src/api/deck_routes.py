@@ -93,16 +93,20 @@ def handle_remove_from_deck():
 def handle_change_card_qty():
     data = request.get_json()
     print('qty change')
-    print(data)
     deck_id = data.get('deck_id')
     card_id = data.get('card_id')
     quantity = data.get('quantity')
+    is_sideboard = data.get('is_sideboard')
 
+    print(is_sideboard)
     deck = Decks.query.get(deck_id)
     card = Cards.query.get(card_id)
 
     if deck is not None and card is not None:
-        deck.change_card_qty(card, quantity)
+        if is_sideboard is True:
+            deck.change_sideboard_card_qty(card, quantity)
+        else:
+            deck.change_card_qty(card, quantity)
         return jsonify({'msg':'Card quantity changed successfully.'}), 200
     else:
         return jsonify({'msg':'Card or deck not found.'}), 400
@@ -140,7 +144,7 @@ def handle_move_to_main():
     card = Cards.query.get(card_id)
 
     if deck is not None and card is not None:
-        deck.move_to_main(card, quantity)
+        deck.move_to_main(card)
         return jsonify({'msg': 'Card added to the sideboard successfully.'}), 200
     else:
         return jsonify({'msg': 'Card or deck not found.'}), 400

@@ -456,16 +456,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			changeCardQuantity: async (deckId, cardData, quantity) => {
+			changeCardQuantity: async (deckId, cardData, quantity, isSideboard) => {
 				const store = getStore()
 				const actions = getActions()
 
 				let newDeckList = [...store.savedDecks]
 				const cardListSearch = newDeckList.find(cardList => cardList.id == deckId)
 				if (cardListSearch) {
-					const cardIndex = cardListSearch.cards.indexOf(cardData)
-					cardListSearch.card_total += quantity
-					cardListSearch.cards[cardIndex].quantity += quantity
+					const cardIndex = isSideboard
+						? cardListSearch.sideboard.indexOf(cardData)
+						: cardListSearch.cards.indexOf(cardData);
+					
+					if (isSideboard){
+						cardListSearch.sideboard_total += quantity
+						cardListSearch.sideboard[cardIndex].quantity += quantity
+					} else {
+						cardListSearch.card_total += quantity
+						cardListSearch.cards[cardIndex].quantity += quantity
+					}
+
+					
 				}
 				setStore({savedDecks: newDeckList})
 
@@ -479,7 +489,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({
 							'deck_id': deckId,
 							'card_id': cardData.id,
-							'quantity': quantity
+							'quantity': quantity,
+							'is_sideboard': isSideboard
 						})
 					})
 					const data = await resp.json();
@@ -514,8 +525,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardData.quantity -= 1
 				}
 
+				if (cardData.quantity <= 0) {
+					console.log(`deleting ${cardData.cardname} from main deck`)
+					await actions.deleteCardFromDeck(deckId, cardData)
+				}
+
 				findDeck.card_total -= 1
 				findDeck.sideboard_total += 1
+
 				setStore({savedDecks: newDeckList})
 
 				try {
@@ -531,10 +548,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'quantity': cardData.quantity
 						})
 					})
-					
-					if (cardData.quantity <= 0) {
-						await actions.deleteCardFromDeck(deckId, cardData)
-					}
 
 					const data = await resp.json();
 					return data;
@@ -561,6 +574,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardData.quantity -= 1
 				}
 
+				if (cardData.quantity <= 0) {
+					console.log(`deleting ${cardData.cardname} from sideboard`)
+					await actions.deleteCardFromSideboard(deckId, cardData)
+				}
+
 				findDeck.card_total += 1
 				findDeck.sideboard_total -= 1
 				setStore({savedDecks: newDeckList})
@@ -578,10 +596,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							'quantity': cardData.quantity
 						})
 					})
-					
-					if (cardData.quantity <= 0) {
-						await actions.deleteCardFromSideboard(deckId, cardData)
-					}
 
 					const data = await resp.json();
 					return data;
