@@ -17,23 +17,23 @@ const maxQuantities = {
     sevendwarves: 7
   };
   
-  export const checkMaxQty = (deckData, cardData, cardQty) => {
+  export const checkMaxQty = (deckData, cardData, cardChangeQty) => {
     if (anyNumberOf.includes(cardData.cardname) || cardData.card_type.includes("Basic Land")) {
       return true;
     };
-
+    console.log(cardData)
+    console.log(cardChangeQty)
     const maxQty = getMaxQuantity(deckData.format, cardData);
 
     const findCardInDeck = deckData?.cards.find(cardInDeck => cardInDeck.id == cardData.id);
-    const findCardInSideboard = deckData?.sideboard.find(cardInSideboard => cardInSideboard.id == cardData.id);
+    const findCardInSideboard = deckData?.sideboard?.find(cardInSideboard => cardInSideboard.id == cardData.id);
     
     const deckCardQty = findCardInDeck?.quantity ?? 0;
     const sideboardCardQty = findCardInSideboard?.quantity ?? 0;
 
-    if ((deckCardQty + sideboardCardQty + 1) > maxQty) {
+    if ((deckCardQty + sideboardCardQty + cardChangeQty) > maxQty) {
       return (
-        `"${deckData.deckname}" already contains ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.` + 
-        ` A ${deckData.format} deck cannot contain more than ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.`
+        `"${deckData.deckname}" cannot contain more than ${maxQty} cop${maxQty === 1 ? 'y' : 'ies'} of ${cardData.cardname}.`
         );
     };
 

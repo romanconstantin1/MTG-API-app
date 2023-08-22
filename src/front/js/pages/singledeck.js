@@ -14,7 +14,7 @@ export const SingleDeck = () => {
     const parsedData = JSON.parse(decodedData);
     const [ deckData, setDeckData ] = useState({"deckname": "Loading...", "cards":[]});
     const [ isLegal, setIsLegal ] = useState();
-
+    
     useEffect(() => {
         if (store.savedDecks.length > 0) {
             getDeck();
@@ -42,7 +42,7 @@ export const SingleDeck = () => {
             setIsLegal("Loading...");
         } else {
             const checkDeckQty = checkDeckSize(deckData, deckData.card_total);
-            setIsLegal(checkDeckQty ? `${deckData.format} legal` : `not ${deckData.format} legal`);
+            setIsLegal(checkDeckQty ? `legal in ${deckData.format}` : `not legal in ${deckData.format}`);
         }
     }
 

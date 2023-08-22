@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { Context } from "../../store/appContext";
 import { checkMaxQty } from "../../utils/checkMaxQty";
-// import { checkDeckSize, checkSideboardSize } from "../../utils/checkDeckSize";
+import { checkDeckSize, checkSideboardSize } from "../../utils/checkDeckSize";
 
 export const CardInSideboardControls = (props) => {
     const { store, actions } = useContext(Context)
@@ -11,17 +11,23 @@ export const CardInSideboardControls = (props) => {
 
     const handleAddCard = () => {
         const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
+        const sideboardSizeCheck = checkSideboardSize(deckData, deckData.sideboard_total + 1)
+        
         if (maxCardCheck != true) {
             alert(maxCardCheck)
-        } else if (typeof deckSizeCheck === "string") {
-            alert(deckSizeCheck)
+        } else if (typeof sideboardSizeCheck === "string") {
+            alert(sideboardSizeCheck)
         } else {
             actions.changeCardQuantity(deckData.id, cardData, 1, true)
         }   
     }
 
     const handleSubtractCard = () => {
-        actions.changeCardQuantity(deckData.id, cardData, -1, true)
+        if (cardData.quantity - 1 <= 0) {
+            actions.deleteCardFromSideboard(deckData.id, cardData)
+        } else {
+            actions.changeCardQuantity(deckData.id, cardData, -1, true)
+        }
     }
 
     const handleMoveToMaindeck = () => {
@@ -41,7 +47,7 @@ export const CardInSideboardControls = (props) => {
             <button className="mx-1" onClick={handleAddCard}>+</button>
             <button onClick={handleSubtractCard}>-</button>
             <button className="mx-1" onClick={() => handleDeleteCard()}>Delete from sideboard</button>
-            <button className="mx-1" onClick={() => handleMoveToMaindeck()}>Move to main deck</button>
+            <button className="mx-1" onClick={() => handleMoveToMaindeck()}>Move 1 to main deck</button>
             {/* <button className="mx-1" onClick={() => handleView()}>Test</button> */}
         </>
     )
