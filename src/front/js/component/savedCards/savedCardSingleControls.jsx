@@ -12,6 +12,7 @@ export const SavedCardControls = (cardData) => {
     // const [ deckID, setDeckID ] = useState('');
     // const [ deckFormat, setDeckFormat ] = useState('');
     const [ deckData, setDeckData ] = useState(null);
+    const [ changeVal, setChangeVal ] = useState(1);
     const cardEntry = cardData.cardData 
 
     const handleDelete = (cardData) => actions.deleteCard(cardData);
@@ -32,9 +33,9 @@ export const SavedCardControls = (cardData) => {
         }
         detailedLog(cardData)
         const checkIfLegal = checkFormatLegality(cardData, store.savedDecks, deckData.id, true);
-        const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
-        const deckSizeCheck = checkDeckSize(deckData, deckData.card_total + 1)
-            
+        const maxCardCheck = checkMaxQty(deckData, cardData, parseInt(changeVal))
+        const deckSizeCheck = checkDeckSize(deckData, deckData.card_total + parseInt(changeVal))
+
         if (checkIfLegal !== true) {
             alert(`"${deckData.deckname}" is a deck in the ${deckData.format} format. ${cardData.cardname} is not legal in the ${checkIfLegal} format`);
         } else if (maxCardCheck != true) {
@@ -42,8 +43,10 @@ export const SavedCardControls = (cardData) => {
         } else if (typeof deckSizeCheck === "string") {
             alert(deckSizeCheck)
         } else {
-            actions.addSavedCardToDeck(deckData.id, cardData);
+            actions.addSavedCardToDeck(deckData.id, cardData, parseInt(changeVal));
         }
+
+        setChangeVal(1);
     };
 
     return (
@@ -55,6 +58,12 @@ export const SavedCardControls = (cardData) => {
                     <option key={deckEntry.id} value={deckEntry.id}>{deckEntry.deckname}</option>
                     ))}
                 </select>
+                <input 
+                    type="number"
+                    min="1"
+                    value={changeVal} 
+                    onChange={event => setChangeVal(event.target.value)}
+                ></input>
                 <button className="ms-1" onClick={() => handleAddToDeck(cardEntry)}>Add to deck</button>
             </div>
 
