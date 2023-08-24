@@ -59,9 +59,10 @@ export const SavedCardControls = (cardData) => {
                     ))}
                 </select>
                 <input 
-                    type="number"
-                    min="1"
-                    value={changeVal} 
+                    type="text"
+                
+                    placeholder="(optional) Card quantity"
+                    value={changeVal}
                     onChange={event => setChangeVal(event.target.value)}
                 ></input>
                 <button className="ms-1" onClick={() => handleAddToDeck(cardEntry)}>Add to deck</button>

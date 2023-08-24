@@ -56,15 +56,18 @@ export const CardInDeckControls = (props) => {
 
     return (
         <>
+            <button onClick={handleAddCard}>Add multiple: </button>
             <input 
                 type="number" 
                 min="1" max="100" 
                 value={changeVal} 
                 onChange={event => setChangeVal(event.target.value)}
-            ></input>
-
-            <button className="mx-1" onClick={handleAddCard}>+</button>
-            <button onClick={handleSubtractCard}>-</button>
+            />
+            <div>
+                <button className="mx-1" onClick={handleAddCard}>Add 1</button>
+                <button onClick={handleSubtractCard}>Remove 1</button>
+            </div>
+            
             <button className="mx-1" onClick={handleDeleteCard}>Delete from main deck</button>
             {deckData.sideboard && deckData.sideboard_total !== undefined && (
                 <button className="mx-1" onClick={handleMoveToSideboard}>Move 1 to sideboard</button>

@@ -161,8 +161,8 @@ def remove_card(id):
     return jsonify(response), 200
 
 @cards_api.route('/cards', methods=['GET'])
-@jwt_required()
 @cross_origin()
+@jwt_required()
 def handle_cards():
     user_id = get_jwt_identity()
     cards = Cards.query.filter_by(user_id=user_id).all()

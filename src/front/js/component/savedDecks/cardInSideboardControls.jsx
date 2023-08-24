@@ -10,7 +10,7 @@ export const CardInSideboardControls = (props) => {
     const deckData = props.props[1]
 
     const handleAddCard = () => {
-        const maxCardCheck = checkMaxQty(deckData, cardData, cardData.quantity + 1)
+        const maxCardCheck = checkMaxQty(deckData, cardData, 1)
         const sideboardSizeCheck = checkSideboardSize(deckData, deckData.sideboard_total + 1)
         
         if (maxCardCheck != true) {

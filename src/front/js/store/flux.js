@@ -80,17 +80,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(userData)
 					})
 					const data = await resp.json()
-					
+					console.log(data)
 					if (resp.status != 200) {
 						return alert(data.msg)
 					}
 
-					localStorage.setItem("jwt_token", data.token);
+					localStorage.setItem("jwt_token", data.jwt_token);
+					localStorage.setItem("refresh_token", data.refresh_token);
 					localStorage.setItem("user_id", data.user_id);
 					localStorage.setItem("username", data.username);
+
+					const localToken = localStorage.getItem("jwt_token")
+					console.log(localToken)
+
 					await actions.getSavedCards();
 					await actions.getSavedDecks();
-					//console.log(data);
 					return data;
 				} catch(error) {
 					console.log(`Error trying to log in ${userData.username}`, error)
@@ -111,18 +115,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 
-			getSavedCards: async () => {
-				const token = localStorage.getItem("jwt_token");
+			refreshToken: async () => {
+				const refreshToken = localStorage.getItem('refresh_token');
+				const resp = await fetch(process.env.BACKEND_URL + '/api/refresh_token', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${refreshToken}`
+					}
+				});
+
+				const data = await resp.json();
+				const newJwtToken = data.jwt_token;
+				const newRefreshToken = data.refresh_token;
+
+				localStorage.setItem('jwt_token', newJwtToken);
+				localStorage.setItem('refresh_token', newRefreshToken);
+				
+				return newJwtToken;
+			},
+
+			makeRequestWithRefresh: async (url, options) => {
+				const actions = getActions();
+
 				try {
-					const resp = await fetch(process.env.BACKEND_URL + "/api/cards", {
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
-						}
-					})
-					const data = await resp.json()
-					setStore({savedCards: data.saved_cards})
+					const resp = await fetch(url, options);
+					if (resp.status === 401) {
+						console.log("token expired, refreshing")
+						const newJwtToken = await actions.refreshToken();
+						options.headers['Authorization'] = `Bearer ${newJwtToken}`;
+						return fetch(url, options);
+					}
+					return resp;
+				} catch (error) {
+					console.error('API request error:', error);
+					throw error;
+				}
+			},
+
+			getSavedCards: async () => {
+				const actions = getActions()
+				const token = localStorage.getItem("jwt_token");
+				const url = process.env.BACKEND_URL + "/api/cards";
+				const options = {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					}
+				};
+
+				try {
+					const resp = await actions.makeRequestWithRefresh(url, options);
+					const data = await resp.json();
+					setStore({savedCards: data.saved_cards});
 					return data;
 				} catch(error) {
 					console.log("Unable to get saved cards on load", error)
@@ -244,20 +290,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getSavedDecks: async () => {
+				const actions = getActions();
 				const token = localStorage.getItem("jwt_token");
-				try{
-					const resp = await fetch(process.env.BACKEND_URL + "/api/decks", {
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-							"Authorization": `Bearer ${token}`
-						}
-					})
-					const data = await resp.json()
-					console.log(data.saved_decks)
-					setStore({savedDecks: data.saved_decks})
+				const url = process.env.BACKEND_URL + "/api/decks";
+				const options = {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`
+					}
+				};
+
+				try {
+					const resp = await actions.makeRequestWithRefresh(url, options);
+					const data = await resp.json();
+					console.log(data.saved_decks);
+					setStore({savedDecks: data.saved_decks});
 					return data;
-				}catch(error){
+				} catch(error) {
 					console.log("Unable to get saved decks on load", error)
 				}
 			},
