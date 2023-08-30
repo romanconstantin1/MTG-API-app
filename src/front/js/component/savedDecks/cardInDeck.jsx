@@ -6,7 +6,6 @@ import { Context } from "../../store/appContext";
 import { CardInDeckControls } from "./cardInDeckControls.jsx";
 
 export const CardInDeck = (props) => {
-    const { store, actions } = useContext(Context)
     const cardData = props.props[0]
     const deckData = props.props[1]
 

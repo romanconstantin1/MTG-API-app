@@ -31,6 +31,7 @@ const injectContext = PassedComponent => {
 			 * store, instead use actions, like this:
 			 **/
 			state.actions.getMessage(); // <---- calling this function from the flux.js actions
+			console.log("appContext useEffect trigger")
 			{isAuthenticatedUser? (state.actions.getSavedCards()) : []};
 			{isAuthenticatedUser? (state.actions.getSavedDecks()) : []};
 		}, []);

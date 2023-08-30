@@ -24,7 +24,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			allCardPrintings: [],
 			savedCards: ["default"],
 			savedDecks: ["default"],
-			selectedCard: null
+			selectedCard: null,
+			sortType: "byMana"
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -227,8 +228,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const user_id = localStorage.getItem("user_id");
 				//check if a card being added is already in the DB
 				const savedCardCheck = store.savedCards.find(
-					cardExists => cardExists.scryfall_id === cardData.id || 
-								cardExists.scryfall_id === cardData.scryfall_id)
+					cardExists => cardExists.oracle_id === cardData.id || 
+								cardExists.oracle_id === cardData.oracle_id)
 				if (savedCardCheck) {
 					console.log("this card is already in the database")
 					return savedCardCheck
@@ -368,6 +369,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			setDeckSortType: (typeVal) => {
+				console.log(typeVal)
+				setStore({sortType: typeVal})
+			},
 			// the next few functions are basically the same; would be good to find a way to reduce it to one
 			// or add more modularity to how the functions... function
 
@@ -396,9 +401,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					cardData.quantity = quantity
 					findDeck.card_total += quantity
 					findDeck.cards.push(cardData)
-				}
+				};
 
-				setStore({savedDecks: newDeckList})
+				//newDeckList[0].cards.sort((a, b) => a.cardname.localeCompare(b.cardname));
+
+				detailedLog(newDeckList[0].cards)
+				setStore({savedDecks: newDeckList});
 
 				try {
 					const resp = await fetch(process.env.BACKEND_URL + '/api/decks/add_card/', {
@@ -448,7 +456,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// detailedLog(findDeck)
 					await findDeck.cards.push(savedCard)
 				}
-
+				//newDeckList.cards.sort((a, b) => a.cardname.localeCompare(b.cardname));
 				await setStore({savedDecks: newDeckList})
 				
 				try {
@@ -551,11 +559,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			// when cards are moved to/from sideboard they briefly exist with a quantity of 0
-			// need to fix that so that they don't display if the quantity is 0 
+			setCardOrder: (deckId, sortedDeck) => {
+				const store = getStore();
+				const actions = getActions();
 
-			// alternatively, a separate generic function that deletes a card from the list
-			// but only on the front end?
+				const newDeckList = [...store.savedDecks];
+				const findDeck = newDeckList.find(cardList => cardList.id == deckId);
+				newDeckList[newDeckList.indexOf(findDeck)] = sortedDeck;
+				setStore({savedDecks: newDeckList});
+			},
 
 			moveToSideboard: async (deckId, cardData) => {
 				const store = getStore()
@@ -582,7 +594,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				findDeck.card_total -= 1
 				findDeck.sideboard_total += 1
-
 				setStore({savedDecks: newDeckList})
 
 				try {

@@ -264,6 +264,7 @@ class Cards(db.Model):
     card_type = db.Column(db.String(120), unique=False, nullable=False)
     mana_cost = db.Column(db.String(120), unique=False)
     cmc = db.Column(db.Integer, unique=False)
+    colors = db.Column(db.String(120), unique=False)
     image_uri_small = db.Column(db.String(250), unique=False, nullable=False)
     image_uri_normal = db.Column(db.String(250), unique=False, nullable=False)
     is_restricted = db.Column(db.String(10), unique=False)
@@ -275,7 +276,7 @@ class Cards(db.Model):
     defense = db.Column(db.Integer, nullable=True)
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
-    scryfall_id = db.Column(db.String(120), unique=False, nullable=True)
+    oracle_id = db.Column(db.String(120), unique=False, nullable=True)
     card_sides = db.relationship('CardSides', cascade='all, delete')
 
     def __repr__(self):
@@ -288,6 +289,7 @@ class Cards(db.Model):
             "card_type": self.card_type,
             "mana_cost": self.mana_cost,
             "cmc": self.cmc,
+            "colors": self.colors,
             "oracle_text": self.oracle_text,
             "legalities": self.legalities,
             "is_restricted": self.is_restricted,
@@ -295,7 +297,7 @@ class Cards(db.Model):
             "artist": self.artist,
             "image_small": self.image_uri_small,
             "image_normal": self.image_uri_normal,
-            "scryfall_id": self.scryfall_id,
+            "oracle_id": self.oracle_id,
             "power": self.power,
             "toughness": self.toughness,
             "loyalty": self.loyalty,
@@ -310,6 +312,7 @@ class Cards(db.Model):
                     "cardname": side.side_name,
                     "card_type": side.side_card_type,
                     "mana_cost": side.side_mana_cost,
+                    "colors": side.side_colors,
                     "oracle_text": side.side_oracle_text,
                     "flavor_text": side.side_flavor_text,
                     "artist": side.side_artist,
@@ -325,13 +328,14 @@ class Cards(db.Model):
         return card_data 
     
     @classmethod
-    def create(cls, name, user_id, card_type, mana_cost, cmc, oracle_text, legalities, is_restricted, flavor_text, 
-               artist, image_uri_small, image_uri_normal, scryfall_id, power=None, toughness=None, loyalty=None, defense=None):
+    def create(cls, name, user_id, card_type, mana_cost, cmc, colors, oracle_text, legalities, is_restricted, flavor_text, 
+               artist, image_uri_small, image_uri_normal, oracle_id, power=None, toughness=None, loyalty=None, defense=None):
         new_card = cls()
         new_card.name = name
         new_card.user_id = user_id
         new_card.card_type = card_type
         new_card.mana_cost = mana_cost
+        new_card.colors = colors
         new_card.oracle_text = oracle_text
         new_card.legalities = legalities
         new_card.is_restricted = is_restricted
@@ -339,7 +343,7 @@ class Cards(db.Model):
         new_card.artist = artist
         new_card.image_uri_small = image_uri_small
         new_card.image_uri_normal = image_uri_normal
-        new_card.scryfall_id = scryfall_id
+        new_card.oracle_id = oracle_id
         new_card.cmc = cmc
         new_card.power = power
         new_card.toughness = toughness
@@ -368,6 +372,7 @@ class CardSides(db.Model):
     side_name = db.Column(db.String(120), nullable=False)
     side_card_type = db.Column(db.String(120), nullable=False)
     side_mana_cost = db.Column(db.String(120))
+    side_colors = db.Column(db.String(120))
     side_power = db.Column(db.Integer, nullable=True)
     side_toughness = db.Column(db.Integer, nullable=True)
     side_loyalty = db.Column(db.Integer, nullable=True)
@@ -382,7 +387,7 @@ class CardSides(db.Model):
         return f'<CardSide: {self.side_name}>'
     
     @classmethod
-    def create(cls, card_id, side_name, side_card_type, side_mana_cost, side_oracle_text, side_flavor_text,
+    def create(cls, card_id, side_name, side_card_type, side_mana_cost, side_colors, side_oracle_text, side_flavor_text,
                side_artist, side_image_uri_small, side_image_uri_normal, side_power=None, side_toughness=None, 
                side_loyalty=None, side_defense=None):
         new_side = cls()
@@ -390,6 +395,7 @@ class CardSides(db.Model):
         new_side.side_name = side_name
         new_side.side_card_type = side_card_type
         new_side.side_mana_cost = side_mana_cost
+        new_side.side_colors = side_colors
         new_side.side_oracle_text = side_oracle_text
         new_side.side_flavor_text = side_flavor_text
         new_side.side_artist = side_artist

@@ -23,7 +23,7 @@ ENV = os.getenv("FLASK_ENV")
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY4ODc0OTY4NSwiaWF0IjoxNjg4NzQ5Njg1fQ.wrZIzha2IVKB0Mrw1xNg7y5633nIovmbQYIj053xgjk'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 30
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
 app.url_map.strict_slashes = False
 
 jwt = JWTManager(app)

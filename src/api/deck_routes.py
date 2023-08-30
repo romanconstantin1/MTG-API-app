@@ -110,7 +110,7 @@ def handle_change_card_qty():
         return jsonify({'msg':'Card quantity changed successfully.'}), 200
     else:
         return jsonify({'msg':'Card or deck not found.'}), 400
-    
+
 @decks_api.route('/decks/add_sideboard', methods=['PUT'])
 @cross_origin()
 def handle_add_sideboard():

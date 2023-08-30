@@ -70,7 +70,9 @@ export const SavedCardControls = (cardData) => {
 
             <div className="mb-2">
                 <button onClick={() => handleDelete(cardEntry)}>Delete this card</button>
+                <button onClick={() => console.log(cardEntry.colors)}>C</button>
             </div>
+            
         </div>
     )
 }

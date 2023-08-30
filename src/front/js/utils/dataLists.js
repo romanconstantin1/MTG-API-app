@@ -28,3 +28,6 @@ export const restrictedList = [
     "Windfall", "Yawgmoth's Will"
 ]
 
+export const cardTypes = [
+    "Creature", "Artifact", "Enchantment", "Planeswalker", "Land", "Battle", "Instant", "Sorcery"
+]

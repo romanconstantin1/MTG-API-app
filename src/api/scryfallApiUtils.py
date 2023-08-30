@@ -4,11 +4,12 @@ class ScryfallAPIUtils(object):
         is_restricted = False
         flavor_text = None
         oracle_text = None
-        scryfall_id = None
+        oracle_id = None
         power = None
         toughness = None
         loyalty = None
         defense = None
+        colors = ""
 
         for entry in isLegalIn:
             if isLegalIn[entry] == "legal":
@@ -16,13 +17,17 @@ class ScryfallAPIUtils(object):
             if isLegalIn[entry] == "restricted":
                 legalities.append(entry)
                 is_restricted = True
+        
+        for i in cardData["colors"]:
+            if i.isalpha():
+                colors += i
 
         if "flavor_text" in cardData:
             flavor_text = cardData["flavor_text"]
         if "oracle_text" in cardData:
             oracle_text = cardData["oracle_text"]
-        if "id" in cardData:
-            scryfall_id = cardData["id"]
+        if "oracle_id" in cardData:
+            oracle_id = cardData["oracle_id"]
 
         # Scryfall API stores these values as strings for some reason
         if "power" in cardData:
@@ -49,7 +54,8 @@ class ScryfallAPIUtils(object):
             "artist": cardData["artist"],
             "image_uri_small": cardData["image_uris"]["small"],
             "image_uri_normal": cardData["image_uris"]["normal"],
-            "scryfall_id": scryfall_id
+            "oracle_id": oracle_id,
+            "colors": colors
             # need to find a way to store all image uri's
             # but is that even necessary? normal images are 198kb
         }
