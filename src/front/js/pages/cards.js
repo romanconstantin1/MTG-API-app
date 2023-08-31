@@ -16,9 +16,6 @@ export const SavedCards = () => {
                 <h1>{localStorage.getItem("username")}'s saved cards</h1>
             </div>
             <SavedCardsGrid />
-            {/* {console.log("return")}
-            {console.log(store.savedCards)} */}
-            {/* {savedCards.map(entry => <img src={entry.image} />)} */}
         </div>
     )
 }

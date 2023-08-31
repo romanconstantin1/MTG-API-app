@@ -1,6 +1,6 @@
 import React from "react";
 
-import { cardTypes } from "./dataLists";
+import { cardTypes, typePriority } from "./dataLists";
 import { detailedLog } from "./detailedLog";
 
 export const sortCards = (deckData, sortType) => {
@@ -20,7 +20,6 @@ export const sortCards = (deckData, sortType) => {
             cardsToSort = alphabetize(cardsToSort);
             break;
     };
-
     return cardsToSort;
 };
 
@@ -44,8 +43,34 @@ const sortByMana = (deckData) => {
 };
 
 const sortByType = (deckData) => {
-    console.log("sort by card type")
-    console.log("(this might take some work)")
+
+    const groupedCards = [];
+
+    for (const card of deckData) {
+        console.log(card)
+        const typeString = card.card_type || "";
+        const type = typeString.split(" ");
+        
+        type.sort((a, b) => (typePriority[a] || Infinity) - (typePriority[b] || Infinity));
+
+        const primaryType = type[0] || "Uncategorized";
+
+        if (!groupedCards[primaryType]) {
+            groupedCards[primaryType] = [];
+        }
+
+        groupedCards[primaryType].push(card);
+        alphabetize(groupedCards[primaryType]);
+    };
+
+    const sortedCards = cardTypes
+        .filter(category => groupedCards.hasOwnProperty(category))
+        .map(category => ({
+        type: category,
+        cards: groupedCards[category] || []
+    }));
+
+    return sortedCards;
 };
 
 const sortByColor = (deckData) => {

@@ -62,10 +62,6 @@ export const SingleDeck = () => {
         actions.setDeckSortType(typeVal)
     };
 
-    // const handleDeckSort = () => {
-    //     setSortType()
-    // };
-
     const renderCardsByMana = () => {
         const sortedCards = sortCards(deckData.cards, store.sortType)
         return (
@@ -104,6 +100,16 @@ export const SingleDeck = () => {
 
     const renderCardsByType = () => {
         const sortedCards = sortCards(deckData.cards, store.sortType)
+        return (
+            Object.keys(sortedCards).map(typeGroup => (
+                <div key = {typeGroup}> 
+                <h2>{sortedCards[typeGroup].type}</h2>
+                {sortedCards[typeGroup].cards.map(card => (
+                    <CardInDeck key={card.id} props={[card, deckData]} />
+                ))}
+                </div>
+            ))
+        );
     }
 
     return (

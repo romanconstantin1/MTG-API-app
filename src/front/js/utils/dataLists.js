@@ -31,3 +31,14 @@ export const restrictedList = [
 export const cardTypes = [
     "Creature", "Artifact", "Enchantment", "Planeswalker", "Land", "Battle", "Instant", "Sorcery"
 ]
+
+export const typePriority = {
+    "Creature": 1,
+    "Land": 2,
+    "Artifact": 3,
+    "Enchantment": 4,
+    "Planeswalker": 5,
+    "Battle": 6,
+    "Instant": 7,
+    "Sorcery": 8
+}

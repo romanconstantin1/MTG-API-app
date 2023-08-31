@@ -13,9 +13,6 @@ export const SavedDecks = () => {
                     <h1>{localStorage.getItem("username")}'s saved decks</h1>
             </div>
             <SavedDecksDisplay />
-            {/* {console.log("return")}
-            {console.log(store.savedCards)} */}
-            {/* {savedCards.map(entry => <img src={entry.image} />)} */}
         </div>
     )
 }

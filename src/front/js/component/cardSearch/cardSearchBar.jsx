@@ -56,6 +56,8 @@ export const CardSearchBar = () => {
             </div>
             
             <h6 className="my-3">Try "Mishra," "Urza," "Swords To Plowshares," etc.</h6>
+
+            <button onClick={() => alert("random card")}>Find a random card</button>
         </div>
     )
 }
