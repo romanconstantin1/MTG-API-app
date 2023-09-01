@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 
 import { Context } from "../../store/appContext";
+import { sortCards } from "../../utils/sortDeckBy";
 import { SavedCardInGrid } from "./savedCardSingle.jsx";
 import { SavedCardControls } from "./savedCardSingleControls.jsx";
 
@@ -11,10 +12,12 @@ export const SavedCardsGrid = () => {
         if (store?.savedCards[0] == "default") {
             return <h1>Loading saved cards...</h1>;
         } else if (store.savedCards.length > 0) {
+            const sortedCards = sortCards(store.savedCards)
+
             return (
                 <>
                     <div className="d-flex flex-wrap">
-                        {store.savedCards.map((entry) => (
+                        {sortedCards.map((entry) => (
                             <div className="d-flex flex-column align-items-center" key={entry.id}>
                                 <SavedCardInGrid key={`img ${entry.id}`} cardData={entry} />
                                 <h5>

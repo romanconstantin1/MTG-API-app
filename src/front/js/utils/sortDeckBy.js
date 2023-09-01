@@ -31,7 +31,11 @@ const sortByMana = (deckData) => {
             let currentGroup = null;
 
             for (const card of deckData) {
-                if (card.cmc !== currentManaValue) {
+                if (card?.isCommander || card?.isOathbreaker) {
+                    currentManaValue = "Commander"
+                    currentGroup = []
+                    groupedCards.unshift({ manaValue: currentManaValue, cards: currentGroup })
+                } else if (card.cmc !== currentManaValue) {
                     currentManaValue = card.cmc;
                     currentGroup = [];
                     groupedCards.push({ manaValue: currentManaValue, cards: currentGroup });
@@ -47,7 +51,6 @@ const sortByType = (deckData) => {
     const groupedCards = [];
 
     for (const card of deckData) {
-        console.log(card)
         const typeString = card.card_type || "";
         const type = typeString.split(" ");
         

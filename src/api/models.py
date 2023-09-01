@@ -46,8 +46,12 @@ class Users(db.Model):
 cards_in_decks = db.Table('cards_in_decks',  
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
     db.Column("deck_id", db.Integer, db.ForeignKey("decks.id"), primary_key=True),
-    db.Column("quantity", db.Integer)
+    db.Column("quantity", db.Integer),
+    db.Column("is_commander", db.Boolean, nullable=True),
+    db.Column("is_oathbreaker", db.Boolean, nullable=True),
+    db.Column("is_signature_spell", db.Boolean, nullable=True)
 )
+
 
 cards_in_sideboards = db.Table('cards_in_sideboards',  
     db.Column("card_id", db.Integer, db.ForeignKey("cards.id"), primary_key=True),
@@ -277,6 +281,9 @@ class Cards(db.Model):
     legalities = db.Column(db.String(250), unique=False, nullable=True)
     artist = db.Column(db.String(120), unique=False, nullable=False)
     oracle_id = db.Column(db.String(120), unique=False, nullable=True)
+    commander = db.Column(db.Boolean, nullable=True)
+    oathbreaker = db.Column(db.Boolean, nullable=True)
+    signature_spell = db.Column(db.Boolean, nullable=True)
     card_sides = db.relationship('CardSides', cascade='all, delete')
 
     def __repr__(self):
@@ -301,7 +308,7 @@ class Cards(db.Model):
             "power": self.power,
             "toughness": self.toughness,
             "loyalty": self.loyalty,
-            "defense": self.defense
+            "defense": self.defense,
         }
 
         if self.card_sides:
@@ -317,19 +324,32 @@ class Cards(db.Model):
                     "flavor_text": side.side_flavor_text,
                     "artist": side.side_artist,
                     "image_small": side.side_image_uri_small,
-                    "image_normal": side.side_image_uri_normal,
-                    "power": side.side_power,
-                    "toughness": side.side_toughness,
-                    "loyalty": side.side_loyalty,
-                    "defense": side.side_defense
+                    "image_normal": side.side_image_uri_normal
                 })
             card_data["back_side"] = back_side_data
+
+        if self.power is not None:
+            card_data["power"] = self.power
+        if self.toughness is not None:
+            card_data["toughness"] = self.toughness
+        if self.loyalty is not None:
+            card_data["loyalty"] = self.loyalty
+        if self.defense is not None:
+            card_data["defense"] = self.defense
+
+        if self.commander is not None:
+            card_data["commander"] = self.commander
+        if self.oathbreaker is not None:
+            card_data["oathbreaker"] = self.oathbreaker
+        if self.signature_spell is not None:
+            card_data["signature_spell"] = self.signature_spell
 
         return card_data 
     
     @classmethod
     def create(cls, name, user_id, card_type, mana_cost, cmc, colors, oracle_text, legalities, is_restricted, flavor_text, 
-               artist, image_uri_small, image_uri_normal, oracle_id, power=None, toughness=None, loyalty=None, defense=None):
+               artist, image_uri_small, image_uri_normal, oracle_id, power=None, toughness=None, loyalty=None, defense=None,
+               commander=None, oathbreaker=None, signature_spell=None):
         new_card = cls()
         new_card.name = name
         new_card.user_id = user_id
@@ -349,6 +369,9 @@ class Cards(db.Model):
         new_card.toughness = toughness
         new_card.loyalty = loyalty
         new_card.defense = defense
+        new_card.commander = commander
+        new_card.oathbreaker = oathbreaker
+        new_card.signature_spell = signature_spell
 
         db.session.add(new_card)
         db.session.commit()

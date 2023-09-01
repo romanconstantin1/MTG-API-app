@@ -43,7 +43,10 @@ def handle_add():
             front_card_entry["power"],
             front_card_entry["toughness"],
             front_card_entry["loyalty"],
-            front_card_entry["defense"]
+            front_card_entry["defense"],
+            front_card_entry["commander"],
+            front_card_entry["oathbreaker"],
+            front_card_entry["signature_spell"]
         )
         
         back_card_in_db = CardSides.create(
@@ -86,7 +89,10 @@ def handle_add():
                 "power": front_card_entry["power"],
                 "toughness": front_card_entry["toughness"],
                 "loyalty": front_card_entry["loyalty"],
-                "defense": front_card_entry["defense"]
+                "defense": front_card_entry["defense"],
+                "commander": front_card_entry["commander"],
+                "oathbreaker": front_card_entry["oathbreaker"],
+                "signature_spell": front_card_entry["signature_spell"]
             },
             "card_back": {
                 "artist": back_card_entry["artist"],
@@ -127,7 +133,10 @@ def handle_add():
             card_entry["power"],
             card_entry["toughness"],
             card_entry["loyalty"],
-            card_entry["defense"]
+            card_entry["defense"],
+            card_entry["commander"],
+            card_entry["oathbreaker"],
+            card_entry["signature_spell"]
             )
         
         response = {
@@ -148,7 +157,10 @@ def handle_add():
             "power": card_entry["power"],
             "toughness": card_entry["toughness"],
             "loyalty": card_entry["loyalty"],
-            "defense": card_entry["defense"]
+            "defense": card_entry["defense"],
+            "commander": card_entry["commander"],
+            "oathbreaker": card_entry["oathbreaker"],
+            "signature_spell": card_entry["signature_spell"]
             }
 
         return jsonify(response), 200

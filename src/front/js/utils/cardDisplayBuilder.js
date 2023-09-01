@@ -6,7 +6,6 @@ export const cardDisplayBuilder = (passedCardData, cardSide) => {
             <div className="row">
                 
                 <h1>{passedCardData.cardname}</h1>
-                
                 <div className="col">
                     {cardSide?.image_uris && (
                         <img src = {cardSide.image_uris.normal} />

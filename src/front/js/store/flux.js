@@ -81,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(userData)
 					})
 					const data = await resp.json()
-					console.log(data)
+					//console.log(data)
 					if (resp.status != 200) {
 						return alert(data.msg)
 					}
@@ -90,9 +90,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem("refresh_token", data.refresh_token);
 					localStorage.setItem("user_id", data.user_id);
 					localStorage.setItem("username", data.username);
-
-					const localToken = localStorage.getItem("jwt_token")
-					console.log(localToken)
 
 					await actions.getSavedCards();
 					await actions.getSavedDecks();
@@ -305,7 +302,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const resp = await actions.makeRequestWithRefresh(url, options);
 					const data = await resp.json();
-					console.log(data.saved_decks);
 					setStore({savedDecks: data.saved_decks});
 					return data;
 				} catch(error) {
